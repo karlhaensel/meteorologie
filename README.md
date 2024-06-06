@@ -1,2 +1,2 @@
 # meteorologie
- Diverse Skripte für das Studium der Meteorologie an der Universität Hamburg
+In diesem Verzeichnis sammle ich aktuell Python-Skripte, die ich im Rahmen meines Studiums zum Bachelor of Science Meteorologie an der Universität Hamburg erstellt habe. Sie sollen als Referenz und Anregung dienen, sowohl für mein zukünftiges Ich als auch für andere, die sich mit Datenverarbeitung, Meteorologie oder Naturwissenschaft im Allgemeinen beschäftigen. In der Zukunft werden auch noch Zusammenfassungen in Form von LaTex-Skripten und Fortran-Codebeispiele ergänzt.
