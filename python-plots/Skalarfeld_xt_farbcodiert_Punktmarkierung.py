@@ -1,4 +1,4 @@
-﻿# Skript zum Plotten eines Skalarfeldes samt zeitlicher Aenderung 
+﻿# Skript zum Plotten eines Skalarfeldes samt zeitlicher Aenderung
 # mit Farbcodierung und Punktmarkierung
 
 # Beispiel-Feld hier (fuer z=0): p(x,y) = 1000+(0.1x+0.5)(-0.2y+1.0)
