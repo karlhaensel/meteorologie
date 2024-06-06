@@ -6,8 +6,8 @@
 # konstantem x und konstantem t ausgewertet
 
 # benoetigte Bibliothek importieren
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # fuer Zahlenmengen sowie ggf. math. Funktionen
+import matplotlib.pyplot as plt  # fuer das Zeichnen von Graphen
 
 # Definitionsbereich
 xmin, xmax, xpunkte = 0, 1, 100

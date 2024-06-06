@@ -5,8 +5,8 @@
 # fuer ein anderes Feld p durch Felddefinition ersetzen und ggf. umbenennen
 
 # benoetigte Bibliothek importieren
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # fuer Zahlenmengen sowie ggf. math. Funktionen
+import matplotlib.pyplot as plt  # fuer das Zeichnen von Graphen
 
 # Definitions- und Wertebereich Graph
 X = np.linspace(0, 1, 100)
