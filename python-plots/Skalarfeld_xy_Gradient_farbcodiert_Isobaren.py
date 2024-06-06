@@ -12,10 +12,9 @@ import matplotlib.cm as cm  # fuer die Farblegende
 
 
 # Definitions- und Wertebereich Graph (jeweils 0 <= x,y <= 10 mit 10x10 Werten)
-x = np.linspace(0, 10, 10)
-y = np.linspace(0, 10, 10)
-X, Y = np.meshgrid(x, y)
-
+x = np.linspace(0, 10, 11)  # 10 x-Werte zwischen 0 und 11 (11 nicht dabei)
+y = np.linspace(0, 10, 11)  # 10 y-Werte zwischen 0 und 11 (11 nicht dabei)
+X, Y = np.meshgrid(x, y)  # 10x10 Grid von x- und y-Werten
 
 # Definition Feld p
 p = 1000 + (0.1 * X + 0.5) * (-0.2 * Y + 1.0)
@@ -38,7 +37,7 @@ fig, ax = plt.subplots()
 # Gradient-Vektoren zeichnen und nach jeweiligem Betrag faerben
 ax.quiver(X, Y, XGRAD, YGRAD, betraege, cmap='coolwarm')
 
-# Isobaren einzeichnen (Variable levels bestimmt Anzahl der Isobaren)
+# Isobaren fuer p einzeichnen (Variable levels bestimmt Anzahl der Isobaren)
 ax.contour(X, Y, p, levels=10, colors='g')
 
 # Beschriftungen
