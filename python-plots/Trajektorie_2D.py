@@ -1,6 +1,7 @@
 ﻿# Skript zum Plotten einer 2D-Trajektorie
 # hier als Beispiel der 2D-Ortsvektor r(t) mit  x = 2t + sin(2t); y = 3t
 
+# benoetigte Bibliotheken importieren
 import numpy as np  # fuer Zahlenmengen sowie ggf. math. Funktionen
 import matplotlib.pyplot as plt  # fuer das Zeichnen von Graphen
 
