@@ -12,8 +12,8 @@ import matplotlib.cm as cm  # fuer die Farblegende
 
 
 # Definitions- und Wertebereich Graph (jeweils 0 <= x,y <= 10 mit 10x10 Werten)
-x = np.linspace(0, 10, 11)  # 10 x-Werte zwischen 0 und 11 (11 nicht dabei)
-y = np.linspace(0, 10, 11)  # 10 y-Werte zwischen 0 und 11 (11 nicht dabei)
+x = np.linspace(0, 10, 11)  # 11 nicht dabei
+y = np.linspace(0, 10, 11)  # 11 nicht dabei
 X, Y = np.meshgrid(x, y)  # 10x10 Grid von x- und y-Werten
 
 # Definition Feld p
