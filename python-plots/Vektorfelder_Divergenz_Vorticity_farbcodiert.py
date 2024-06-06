@@ -1,6 +1,8 @@
 ﻿# benoetigte Bibliothek importieren
-import numpy as np
-import matplotlib.pyplot as plt
+import numpy as np  # fuer Zahlenmengen sowie ggf. math. Funktionen
+import matplotlib.pyplot as plt  # fuer das Zeichnen von Graphen
+from matplotlib.colors import ListedColormap  # fuer das Einfaerben
+from matplotlib.patches import Patch  # fuer die Legenden
 
 # Definitionsbereich
 f = np.linspace(-5, 5, 9)
@@ -11,10 +13,13 @@ X_g, Y_g = np.meshgrid(g, g)
 X_h, Y_h = np.meshgrid(h, h)
 
 # Feldkomponenten definieren
+# Vektorfeld F(x,y) mit F_x=x; F_y=y
 F_x = X_f
 F_y = Y_f
+# Vektorfeld G(x,y) mit F_x=-y; F_y=x
 G_x = -Y_g
 G_y = X_g
+# Vektorfeld H(x,y) mit H_x = -sin(x) + cos(y); H_y = sin(x) + cox(y)
 H_x = -np.sin(X_h) + np.cos(Y_h)
 H_y = np.sin(X_h) + np.cos(Y_h)
 
@@ -37,45 +42,39 @@ subs1 = [sub11, sub21]
 subs2 = [sub12, sub22]
 subs3 = [sub13, sub23]
 for sub in subs1:
-    sub.set_title('Vektorfeld $\\vec{ F }$')
-    sub.set_xlabel('$x$')
+    sub.set_title(r'Vektorfeld $\vec{ F }$')
+    sub.set_xlabel(r'$x$')
     sub.set_xticks(np.linspace(-5, 5, 11))
-    sub.set_ylabel('$y$')
+    sub.set_ylabel(r'$y$')
     sub.set_yticks(np.linspace(-5, 5, 11))
 for sub in subs2:
-    sub.set_title('Vektorfeld $\\vec{ G }$')
-    sub.set_xlabel('$x$')
+    sub.set_title(r'Vektorfeld $\vec{ G }$')
+    sub.set_xlabel(r'$x$')
     sub.set_xticks(np.linspace(-5, 5, 11))
-    sub.set_ylabel('$y$')
+    sub.set_ylabel(r'$y$')
     sub.set_yticks(np.linspace(-5, 5, 11))
 for sub in subs3:
-    sub.set_title('Vektorfeld $\\vec{ H }$')
-    sub.set_xlabel('$-\\pi<x<\\pi$')
+    sub.set_title(r'Vektorfeld $\vec{ H }$')
+    sub.set_xlabel(r'$-\pi<x<\pi$')
     sub.set_xticks(
         [-np.pi, -np.pi/2, 0, np.pi/2, np.pi],
-        ('$-\\pi$', '$-\\frac{\\pi}{2}$', '$0$', '$\\frac{\\pi}{2}$', '$\\pi$')
+        (r'$-\pi$', r'$-\frac{\pi}{2}$', r'$0$', r'$\frac{\pi}{2}$', r'$\pi$')
     )
-    sub.set_ylabel('$-\\pi<x<\\pi$')
+    sub.set_ylabel(r'$-\pi<x<\pi$')
     sub.set_yticks(
         [-np.pi, -np.pi/2, 0, np.pi/2, np.pi],
-        ('$-\\pi$', '$-\\frac{\\pi}{2}$', '$0$', '$\\frac{\\pi}{2}$', '$\\pi$')
+        (r'$-\pi$', r'$-\frac{\pi}{2}$', r'$0$', r'$\frac{\pi}{2}$', r'$\pi$')
     )
 
 # Subplots: Divergenz und Rotation/Vorticity einfaerben
 farben = ['blue', 'green', 'red']
 grenzen = [-10, -0.000001, 0.000001, 10]  # fuer 0 nicht elegant, aber effektiv
-sub11.contourf(
-    X_f, Y_f, Div_F, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
-sub12.contourf(
-    X_g, Y_g, Div_G, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
-sub13.contourf(
-    X_h, Y_h, Div_H, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
-sub21.contourf(
-    X_f, Y_f, Vor_F, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
-sub22.contourf(
-    X_g, Y_g, Vor_G, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
-sub23.contourf(
-    X_h, Y_h, Vor_H, cmap=plt.cm.colors.ListedColormap(farben), levels=grenzen)
+subs = [sub11, sub12, sub13, sub21, sub22, sub23]
+xs = [X_f, X_g, X_h, X_f, X_g, X_h]
+ys = [Y_f, Y_g, Y_h, Y_f, Y_g, Y_h]
+vars = [Div_F, Div_G, Div_H, Vor_F, Vor_G, Vor_H]
+for sub, x, y, var in zip(subs, xs, ys, vars):
+    sub.contourf(x, y, var, cmap=ListedColormap(farben), levels=grenzen)
 
 # Subplots: Vektorfelder zeichnen
 for sub in subs1:
@@ -89,7 +88,18 @@ for sub in subs3:
 fig1.subplots_adjust(hspace=0.2)
 fig2.subplots_adjust(hspace=0.2)
 
-# Graphen speichern (ohne zusaetzlichen Rand) und anzeigen
-fig1.savefig('Plot3', bbox_inches='tight', pad_inches=0)
-fig2.savefig('Plot4', bbox_inches='tight', pad_inches=0)
+# Legenden hinzufügen
+legend_elements_fig1 = [Patch(facecolor='blue', label='Konvergenz'),
+                        Patch(facecolor='green', label='neutral'),
+                        Patch(facecolor='red', label='Divergenz')]
+fig1.legend(handles=legend_elements_fig1, loc='upper right')
+
+legend_elements_fig2 = [Patch(facecolor='blue', label='antizyklonal'),
+                        Patch(facecolor='green', label='neutral'),
+                        Patch(facecolor='red', label='zyklonal')]
+fig2.legend(handles=legend_elements_fig2, loc='upper right')
+
+# Graphen ggf. speichern (ohne zusaetzlichen Rand) und anzeigen
+# fig1.savefig('Plot_Divergenz', bbox_inches='tight', pad_inches=0)
+# fig2.savefig('Plot_Vorticity', bbox_inches='tight', pad_inches=0)
 plt.show()
