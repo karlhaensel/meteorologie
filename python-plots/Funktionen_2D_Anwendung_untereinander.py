@@ -1,4 +1,11 @@
-﻿# benoetigte Bibliothek importieren
+﻿# Skript zum Plotten zweier Funktionen, separat untereinander
+# genutzt wird vom Layout her hauptsaechlich pyplot-Standard
+# statt klassischer mathematischer Funktionsdarstellung
+
+# Beispiel ist hier eine Funktion T(x, t), jeweils einmal mit
+# konstantem x und konstantem t ausgewertet
+
+# benoetigte Bibliothek importieren
 import numpy as np
 import matplotlib.pyplot as plt
 

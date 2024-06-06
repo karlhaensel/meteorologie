@@ -1,5 +1,5 @@
 ﻿# Skript zum Plotten einer oder mehrerer 2D-Funktion
-# genutzt wird dabei statt pyplot-Standard die mathematische Darstellung 
+# genutzt wird dabei statt pyplot-Standard die mathematische Darstellung
 # der Koordinatenachsen mit Ursprung in der Mitte und Achsenkreuz
 # zweite Funktion ggf auskommentieren oder weitere analog dazu
 
