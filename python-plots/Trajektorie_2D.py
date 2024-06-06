@@ -1,8 +1,8 @@
 ﻿# Skript zum Plotten einer 2D-Trajektorie
 # hier als Beispiel der 2D-Ortsvektor r(t) mit  x = 2t + sin(2t); y = 3t
 
-import matplotlib.pyplot as plt
-import numpy as np
+import numpy as np  # fuer Zahlenmengen sowie ggf. math. Funktionen
+import matplotlib.pyplot as plt  # fuer das Zeichnen von Graphen
 
 # Zeit t als unabhängige Variable definieren
 t = np.linspace(0, 10, 100)
