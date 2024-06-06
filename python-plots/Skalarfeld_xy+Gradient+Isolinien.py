@@ -37,8 +37,8 @@ fig, ax = plt.subplots()
 # Gradient-Vektoren zeichnen und nach jeweiligem Betrag faerben
 ax.quiver(X, Y, XGRAD, YGRAD, betraege, cmap='coolwarm')
 
-# Isobaren fuer p einzeichnen (Variable levels bestimmt Anzahl der Isobaren)
-ax.contour(X, Y, p, levels=10, colors='g')
+# Isolinien fuer p (alos hier Isobaren) einzeichnen
+ax.contour(X, Y, p, levels=10, colors='g')  # levels bestimmt Anzahl Isolinien
 
 # Beschriftungen
 ax.set_xlabel('x')
