@@ -43,7 +43,7 @@ ax.contour(X, Y, p, levels=10, colors='g')  # levels bestimmt Anzahl Isolinien
 # Beschriftungen
 ax.set_xlabel('x')
 ax.set_ylabel('y')
-ax.set_title('Gradient mit Isobaren (z=0)')
+ax.set_title('Gradient mit Isolinien (z=0)')  # bzw. hier konkret Isobaren
 
 # Farb-Legende fuer Gradient-Betraege
 farbskala = cm.ScalarMappable(cmap='coolwarm')
