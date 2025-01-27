@@ -1,0 +1,89 @@
+\documentclass[a4paper,10pt]{scrarticle}
+\usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=orange,
+  citecolor=green,
+  urlcolor=green
+}
+
+% Syntax-Highlighting und Code-Umgebung
+\usepackage{xcolor}
+\usepackage{listings}
+\lstdefinelanguage{Fortran95}{
+  language=[95]Fortran,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{purple},
+  morekeywords={kind, module, use, implicit, none, integer, real, double, precision, complex, logical, character, parameter, dimension, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, write, read, print, format, open, close, rewind, backspace, inquire, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import}
+}
+
+\lstset{
+  language=Fortran95,
+  frame=single,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  breaklines=true,
+  tabsize=4,
+  showstringspaces=false,
+  captionpos=t,
+  escapeinside={(*@}{@*)}  % Ermöglicht LaTeX-Befehle innerhalb von Listings
+}
+
+\lstdefinestyle{neutral}{
+  language=bash,
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  backgroundcolor=\color{white},
+  frame=single,
+  rulecolor=\color{black},
+  captionpos=b,
+  commentstyle=\color{black},
+  stringstyle=\color{black},
+  showstringspaces=false,
+  keywordstyle=\color{black}, 
+  morekeywords={}
+}
+
+\renewcommand{\lstlistingname}{Code-Beispiel}
+
+% INLINE: \lstinline|<code>|
+% UMGEBUNG: \begin{lstlisting}[caption={[<shortcaption>]<Caption>}, label=<label>] <codeblock> \end{lstlisting}
+% LaTeX-Befehl innerhalb Umgebung: (*@<LaTeX-Syntax>@*)
+
+% Cleveref
+\usepackage{cleveref}
+\crefname{listing}{Code-Beispiel}{Code-Beispiele}
+\Crefname{listing}{Code-Beispiel}{Code-Beispiele}
+
+
+\begin{document}
+  
+  \part*{Fortran 90/95 Cheat Sheet}
+  Zusammenstellung von Karl Hänsel, Stand: \today
+  \section{Formalia laut FOPS}
+  \begin{itemize}
+    \item Allgemein: nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|
+    \item Namen allgemein: beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche (ohne Umlaute!), immer vor Deklaration \lstinline|implicit none| setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben
+    \item Namensbeginn je nach Typ: logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|
+    \item ACHTUNG: beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
+  \end{itemize}
+  
+  \section{Kompilieren}
+  Einfaches Kompilieren: \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
+  Mehr Fehlermeldungen vorab (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <name>.x <name>.f90|
+  \section{Logische Operatoren}
+  Negation: \lstinline|.not.|
+  
+  \section{Nützliche integrierte Funktionen}
+  \lstinline|<integer> = nint(<real>)| rundet auf nächsten integer (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
+  
+  
+\end{document}
