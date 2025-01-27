@@ -1,8 +1,17 @@
-\documentclass[a4paper,10pt, twocolumn]{scrarticle}
+\documentclass[a4paper, twocolumn]{scrarticle}
 \usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
+
+% Standard-Schriftgröße auf footnoteisze setzen
+\renewcommand{\normalsize}{\footnotesize}
+\AtBeginDocument{\normalsize}
+\renewcommand{\familydefault}{\sfdefault} % Serifenlose Schrift
+
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[ngerman]{babel}
+
+\usepackage[labelfont=bf]{caption} % Setzt Captions fett
+
 \usepackage{hyperref}
 \hypersetup{
   colorlinks=true,
@@ -28,9 +37,13 @@
 
 \lstset{
   language=Fortran95,
+  basicstyle=\ttfamily\footnotesize,
   frame=single,
+  xleftmargin=-12pt,
+  framexleftmargin=-20pt,
   numbers=left,
   numberstyle=\tiny\color{gray},
+  numbersep=-14pt,
   stepnumber=1,
   breaklines=true,
   tabsize=4,
@@ -43,6 +56,8 @@
   language=bash,
   basicstyle=\ttfamily\small,
   numbers=left,
+  xleftmargin=1pt,
+  framexleftmargin=1pt,
   numberstyle=\tiny\color{gray},
   backgroundcolor=\color{white},
   frame=single,
@@ -55,7 +70,7 @@
   morekeywords={}
 }
 
-\renewcommand{\lstlistingname}{Code-Beispiel}
+\renewcommand{\lstlistingname}{Code}
 
 % INLINE: \lstinline|<code>|
 % UMGEBUNG: \begin{lstlisting}[caption={[<shortcaption>]<Caption>}, label=<label>] <codeblock> \end{lstlisting}
@@ -69,21 +84,15 @@
 
 \begin{document}
   
-  {\Huge \textbf{\textsf{Fortran Cheat Sheet}}}\\
+  {\Huge \textbf{\textsf{Fortran Cheat Sheet}}}
   Zusammenstellung: Karl Hänsel, Stand: \today
   \section{Formalia laut FOPS}
-  \begin{itemize}
-    \item Allgemein: nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|
-    \item Namen allgemein: beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche (ohne Umlaute!), immer vor Deklaration \lstinline|implicit none| setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben
-    \item Namensbeginn je nach Typ: logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|
-    \item ACHTUNG: beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
-  \end{itemize}
-  
-  \section{Kompilieren}
-  Einfaches Kompilieren: \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
-  Mehr Fehlermeldungen vorab (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <name>.x <name>.f90|
+  \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
+ \textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche (ohne Umlaute!), immer vor Deklaration \lstinline|implicit none| setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben\\
+ \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|
+ \textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
   \section{Operatoren}
-  Hierarchie der Operatoren:
+  \textbf{Hierarchie der Operatoren:}
   \begin{enumerate}
     \item Geklammerte Ausdrücke \lstinline|( )|
     \item Punktrechnung \lstinline|*, /|
@@ -94,19 +103,20 @@
     \item Disjunktion und Kontravalenz \lstinline|.or., .xor.|
     \item Äquivalenz und Antivalenz \lstinline|.eqv., .neqv.|
   \end{enumerate}
-  außerdem: Verkettung mit \lstinline|//|\\
-  Assoziativität der Operatoren: alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ\\
-  Potenz mit \lstinline|**| ungenauer als reine Multiplikation\\
-  CAVE: Aufgrund von Rundungsfehlern ist mathematische Assoziativität und Fortran-Assoziativität im Ergebnis nicht (immer) exakt gleich \\
-  Werden Zahlen verschiedener Art verrechnet, wird die höhere Priorität übernommen (Hierarchie \lstinline|complex > real > integer|)\\
-  Vergleichsoperatoren funktionieren für alle Zahlen und auch character-Variablen (Vergleich des entsprechenden ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
-  Zusätzliche (Sicherheits-)Klammern verlangsamen Programm nicht
+  \textbf{Verkettung:} mit \lstinline|//|\\
+  \textbf{Assoziativität der Operatoren:} alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ\\
+  \textbf{Potenz} mit \lstinline|**| ungenauer als reine Multiplikation\\
+  \textbf{CAVE:} Aufgrund von Rundungsfehlern ist mathematische \textbf{Assoziativität} und Fortran-Assoziativität im Ergebnis nicht (immer) exakt gleich \\
+  Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität übernommen, Hierarchie \lstinline|complex > real > integer|\\
+  \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des entsprechenden ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
+  \textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen Programm nicht
   
   \section{Zahlen}
+  \lstinline|integer| haben in Fortran 90/95 eine Tiefe von 32 Bit, also einen Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$
   
   \section{Kontrollstrukturen}
   \subsection{Verzweigungen}
-  \begin{lstlisting}[caption={Einzeilige if-Anweisung}]
+  \begin{lstlisting}[caption={\bfseries Einzeilige if-Anweisung}]
     if (<logical>) <einzelne Anweisung>
   \end{lstlisting}
   \begin{lstlisting}[caption={if-then}]
@@ -114,14 +124,14 @@
       <Anweisung(en)>
     endif
   \end{lstlisting}
-  \begin{lstlisting}[caption={if-then-else}]
+  \begin{lstlisting}[caption={\bfseries if-then-else}]
     if (<logical>) then
       <Anweisung(en) 1>
     else
       <Anweisung(en) 2>
     endif
   \end{lstlisting}
-  \begin{lstlisting}[caption={if-then-else-if-...-else}]
+  \begin{lstlisting}[caption={\bfseries if-then-else-if-...-else}]
     if (<logical 1>) then
       <Anweisung(en) 1>
     else if (<logical 2>) then
@@ -133,16 +143,86 @@
     endif
   \end{lstlisting}
   \subsection{Schleifen}
+  \begin{lstlisting}[caption={\bfseries do-Zählschleife (Schrittweite standardmäßig 1, kann auch negativ sein)}, label=lst:do-zahl]
+    do j<varname> = i<startwert>, i<endwert> [, i<schrittweite>]
+      <Anweisung(en)>
+    enddo
+  \end{lstlisting}
+  \begin{lstlisting}[caption={\bfseries do-while-Schleife}, label=lst:do-while]
+    do while (<logical>)
+      <Anweisung(en)>
+      ! Wiederholung bis <logical> .eqv. .false.
+    enddo
+  \end{lstlisting}
+  \begin{lstlisting}[caption={\bfseries do-Schleife (CAVE!)}, label=lst:do]
+    do
+      <Anweisung(en)>
+      ! Anweisungen werden immer wiederholt bis..
+      if (<logical>) exit ! forciert Ende
+    enddo
+  \end{lstlisting}
+ \textbf{Schleifensteuerung:} \lstinline|exit| sorgt für sofortiges Beenden der Schleife (sind Schleifen verschachtelt und nicht benannt, wird nur aktueller Schleifenkontext verlassen), \lstinline|cycle| sorgt für sofortigen Sprung zum Anfang der Schleife (für beide: egal, was danach noch im Code kommt)
+  \begin{lstlisting}[caption={\bfseries Benannte do-Schleifen und explizites exit}]
+    outer: do j_outer = 0, 5
+      middle: do j_middle = 1, 4
+        if (<logical>) exit outer
+        inner: do j_inner = 3, 2, -1
+          <Anweisung(en)>
+        enddo inner
+      enddo middle
+    enddo outer
+  \end{lstlisting}
+ \textbf{ Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördern Lesbarkeit\\
+  \textbf{Faustregel für Schleifenauswahl:} Weiß man (konkret oder abstrakt aus vorherigen Anweisungen) wie oft genau etwas gemacht werden muss, dann wählt man eine do-Zählschleife (\cref{lst:do-zahl}), ist das nicht (genau) bekannt, eine do-while-Schleife (\cref{lst:do-while})
   
+  \section{Felder/Arrays}
+  Alle Werte in einem Feld haben den \textbf{gleichen Typ von Variable} \lstinline|<vartype>|\\
+  Arrays haben einen (unveränderlichen) \textbf{rank} (Anzahl Dimensionen). Jede Dimension hat einen (unveränderlichen) shape \textbf{shape} (Anzahl Elemente pro Dimension) und einen (unveränderlichen) \textbf{extent} (Integer-Bereich, den die Indizes abdecken)\\
+  Es kann \textbf{höchstens 7 Dimensionen} geben, die nicht alle den gleichen shape haben müssen. Wird nur ein shape \lstinline|n| angegeben, ist der \textbf{Start-Index standardmäßig 1} und der End-Index \lstinline|n|. Wird ein extent \lstinline|m:n| angegeben, so ist der shape automatisch gleich $n-m+1$.
+  \begin{lstlisting}[caption={\bfseries Deklarationsmöglichkeiten arrays}]
+    ! EINE DIMENSION
+    ! nur shape=n setzen, Start-Index 1:
+    <vartype>, dimension(<n>) :: <vektorname>
+    ! extent mit eigenem Start-Index m:
+    <vartype>, dimension(<m>:<n>) ::  <vektorname>
+    ! ZWEI DIMENSIONEN
+    ! nur shapes setzen:
+    <vartype>, dimension(<shape 1>, <shape 2>) :: <matrixname>
+    ! extents setzen:
+    <vartype>, dimension(<m1>:<n1>, <m2>:<n2>) :: <natrixname>
+    
+    ! ALTERNATIV auch Deklaration rechts moeglich
+    ! nur shape
+    <vartype> :: <vektorname>(4)
+    ! mit extent
+    <vartype> :: <matrixname>(0:9, 0:9)
+  \end{lstlisting}
+  \begin{lstlisting}[caption={\bfseries Beispiele direkte Definition arrays}]
+    ! Wochentage
+    character(len=2), dimension(7) :: y_wochentage=["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
+    ! geht auch mit \(...\):
+    real, dimension(3) :: z_g=\(0, 0, -9.81\)
+  \end{lstlisting}
+  \textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension\\
+  \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<integervektorname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<integervektorname> = 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
+  Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
+  \textbf{WICHTIG:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden
+  
+  \section{Konstanten}
+  Konstanten nutzen, sobald eine bestimmte Zahl mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
+  \textbf{Definition von Konstanten direkt im Deklarationsteil:} \lstinline|<vartype>, parameter :: <CONSTNAME>=<constwert>| \\
+ \textbf{ Konstanten immer komplett in Großbuchstaben benennen}
   \section{Formatierung und Strings}
-  Strings verbinden: \lstinline|y_string = "String 1"   // "String 2"|
-  \begin{lstlisting}[caption={String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
+ \textbf{ Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
+  \begin{lstlisting}[caption={\bfseries String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
     y_srting = "String 1" // &
                "String 2"
   \end{lstlisting}
   
   \section{Nützliche integrierte Funktionen}
-  \lstinline|<integer> = nint(<real>)| rundet auf nächsten integer (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
+  \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
   
-  
+  \section{Kompilieren}
+  \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
+  \textbf{Mehr Fehlermeldungen vorab} (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <name>.x <name>.f90|
 \end{document}
