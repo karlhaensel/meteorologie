@@ -1,4 +1,4 @@
-\documentclass[a4paper,10pt]{scrarticle}
+\documentclass[a4paper,10pt, twocolumn]{scrarticle}
 \usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -11,6 +11,9 @@
   urlcolor=green
 }
 
+\setlength{\parindent}{0pt} % Kein Einrücken der Absätze
+\setlength{\columnsep}{24pt} % Abstand zwischen den Spalten
+
 % Syntax-Highlighting und Code-Umgebung
 \usepackage{xcolor}
 \usepackage{listings}
@@ -20,7 +23,7 @@
   keywordstyle=\color{blue},
   commentstyle=\color{gray},
   stringstyle=\color{purple},
-  morekeywords={kind, module, use, implicit, none, integer, real, double, precision, complex, logical, character, parameter, dimension, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, write, read, print, format, open, close, rewind, backspace, inquire, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import}
+  morekeywords={xor, kind, module, use, implicit, none, integer, real, double, precision, complex, logical, character, parameter, dimension, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, write, read, print, format, open, close, rewind, backspace, inquire, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import}
 }
 
 \lstset{
@@ -66,8 +69,8 @@
 
 \begin{document}
   
-  \part*{Fortran 90/95 Cheat Sheet}
-  Zusammenstellung von Karl Hänsel, Stand: \today
+  {\Huge \textbf{\textsf{Fortran Cheat Sheet}}}\\
+  Zusammenstellung: Karl Hänsel, Stand: \today
   \section{Formalia laut FOPS}
   \begin{itemize}
     \item Allgemein: nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|
@@ -79,8 +82,64 @@
   \section{Kompilieren}
   Einfaches Kompilieren: \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
   Mehr Fehlermeldungen vorab (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <name>.x <name>.f90|
-  \section{Logische Operatoren}
-  Negation: \lstinline|.not.|
+  \section{Operatoren}
+  Hierarchie der Operatoren:
+  \begin{enumerate}
+    \item Geklammerte Ausdrücke \lstinline|( )|
+    \item Punktrechnung \lstinline|*, /|
+    \item Strichrechnung \lstinline|+, -|
+    \item Vergleichsoperatoren \lstinline|==, /=, >=, <, <=|
+    \item Negation \lstinline|.not.|
+    \item Konjunktion \lstinline|.and.|
+    \item Disjunktion und Kontravalenz \lstinline|.or., .xor.|
+    \item Äquivalenz und Antivalenz \lstinline|.eqv., .neqv.|
+  \end{enumerate}
+  außerdem: Verkettung mit \lstinline|//|\\
+  Assoziativität der Operatoren: alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ\\
+  Potenz mit \lstinline|**| ungenauer als reine Multiplikation\\
+  CAVE: Aufgrund von Rundungsfehlern ist mathematische Assoziativität und Fortran-Assoziativität im Ergebnis nicht (immer) exakt gleich \\
+  Werden Zahlen verschiedener Art verrechnet, wird die höhere Priorität übernommen (Hierarchie \lstinline|complex > real > integer|)\\
+  Vergleichsoperatoren funktionieren für alle Zahlen und auch character-Variablen (Vergleich des entsprechenden ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
+  Zusätzliche (Sicherheits-)Klammern verlangsamen Programm nicht
+  
+  \section{Zahlen}
+  
+  \section{Kontrollstrukturen}
+  \subsection{Verzweigungen}
+  \begin{lstlisting}[caption={Einzeilige if-Anweisung}]
+    if (<logical>) <einzelne Anweisung>
+  \end{lstlisting}
+  \begin{lstlisting}[caption={if-then}]
+    if (<logical>) then
+      <Anweisung(en)>
+    endif
+  \end{lstlisting}
+  \begin{lstlisting}[caption={if-then-else}]
+    if (<logical>) then
+      <Anweisung(en) 1>
+    else
+      <Anweisung(en) 2>
+    endif
+  \end{lstlisting}
+  \begin{lstlisting}[caption={if-then-else-if-...-else}]
+    if (<logical 1>) then
+      <Anweisung(en) 1>
+    else if (<logical 2>) then
+      <Anweisung(en) 2>
+    else if (<logical 3>) then
+      <Anweisung(en) 3>
+    else
+      <Anweisung(en) 4>
+    endif
+  \end{lstlisting}
+  \subsection{Schleifen}
+  
+  \section{Formatierung und Strings}
+  Strings verbinden: \lstinline|y_string = "String 1"   // "String 2"|
+  \begin{lstlisting}[caption={String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
+    y_srting = "String 1" // &
+               "String 2"
+  \end{lstlisting}
   
   \section{Nützliche integrierte Funktionen}
   \lstinline|<integer> = nint(<real>)| rundet auf nächsten integer (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
