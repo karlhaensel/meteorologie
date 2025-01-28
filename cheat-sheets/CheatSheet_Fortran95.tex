@@ -1,5 +1,5 @@
 \documentclass[a4paper, twocolumn]{scrarticle}
-\usepackage[left=1.5cm,right=1.5cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
 
 % Standard-Schriftgröße auf footnoteisze setzen
 \renewcommand{\normalsize}{\footnotesize}
@@ -88,70 +88,86 @@
   {\Huge \textbf{\textsf{Fortran Cheat Sheet}}}
   Zusammenstellung: Karl Hänsel, Stand: \today
   \section{Formalia laut FOPS}
-  \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
- \textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche (ohne Umlaute!), immer vor Deklaration \lstinline|implicit none| setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben\\
- \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|\\
+  \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaute oder ß), Groß- oder Kleinschreibung Fortran egal, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
+ \textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben\\
+ \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|\\
  \textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
+  
   \section{Operatoren}
-  \textbf{Deklaration von Variablen:} \lstinline|<vartype> :: <varname>|\\
+  \textbf{Deklaration von Variablen:} \lstinline|<type> :: <varname>|\\
   \textbf{Zuweisung von Variablen:} \lstinline|<varname> = <Wert>|\\
   \textbf{Hierarchie der Operatoren:}
   \begin{enumerate}
     \item Geklammerte Ausdrücke \lstinline|( )|
     \item Punktrechnung \lstinline|*, /|
     \item Strichrechnung \lstinline|+, -|
-    \item Vergleichsoperatoren \lstinline|==, /=, >=, <, <=|
+    \item Vergleichsoperatoren \lstinline|==, /=, >, >=, <, <=|
     \item Negation \lstinline|.not.|
     \item Konjunktion \lstinline|.and.|
     \item Disjunktion und Kontravalenz \lstinline|.or., .xor.|
     \item Äquivalenz und Antivalenz \lstinline|.eqv., .neqv.|
   \end{enumerate}
   \textbf{Verkettung:} mit \lstinline|//|\\
-  \textbf{Assoziativität der Operatoren:} alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ\\
+  \textbf{Assoziativität der Operatoren:} alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ, \textbf{CAVE:} wegen Rundungsfehlern nicht immer exakt gleich zur mathematischen Assoziativität\\
   \textbf{Potenz} mit \lstinline|**| ungenauer als reine Multiplikation\\
-  \textbf{CAVE:} Aufgrund von Rundungsfehlern ist mathematische \textbf{Assoziativität} und Fortran-Assoziativität im Ergebnis nicht (immer) exakt gleich \\
   Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität übernommen, Hierarchie \lstinline|complex > real > integer|\\
-  \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des entsprechenden ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
-  \textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen Programm nicht
+  \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
+  \textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen nicht
   
-  \section{Datentypen}
-  \subsection{Zahlen}
-  \textbf{Ganze Zahlen:} \lstinline|integer| haben in Fortran 90/95 eine Tiefe von 32 Bit, also einen Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$\\
-  \textbf{CAVE:} \lstinline|<integer var> = 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
+  \section{Zahlen}
+  \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8)\\
+  \textbf{CAVE:} \lstinline|<integer> = 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
   \textbf{Rest einer Division:} \lstinline|mod(<number 1>, <number 2>)| liefert Rest der Division (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
-  \textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real var> = real(<integer var>)|\\
+  \textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
   \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)\\
-  \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| wirklich nur, wenn es um Anzahlen oder Indizes geht, soll gerechnet werden, dann als \lstinline|real|\\
-  \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
+  \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| nur, wenn es um Anzahlen oder Indizes geht; soll gerechnet werden, dann als \lstinline|real|\\
+    \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
   \textbf{Absolutbetrag einer Zahl:} \lstinline|abs(<number>)|
-  \subsection{Zeichenketten (\glqq Strings\grqq)}
-  \textbf{Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
-  \begin{lstlisting}[caption={\bfseries String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
-    y_srting = "String 1" // &
+  \begin{lstlisting}[caption={\bfseries Beispiel: CAVE - implizite Umwandlungen bei Division}]
+    ! BEISPIEL
+    real    :: z
+    integer :: i
+    i = 57
+    i = i/10  ! 5
+    i = i/10.  ! 5, obwohl i/10.==5.7
+    z = i/10  ! 5.0, da i/10 == 5
+    z = i/10.  ! 5.7
+  \end{lstlisting}
+  
+  \section{Zeichenketten (\glqq Strings\grqq)}
+  \textbf{Strings:} in Fortran mit festzulegender Länge an Zeichen  (höchstens 256) \lstinline|character(len=<integer>) :: <character>|\\
+  \textbf{String-Verkettung:} \lstinline|y_string = "String 1"   // "String 2"|
+  \begin{lstlisting}[caption={\bfseries Beispiel: String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
+    y_string = "String 1" // &
     "String 2"
   \end{lstlisting}
-  \textbf{Strings ändern:} Strings können wir arrays indiziert werden, sodass auch einzelne Zeichen gezielt geändert werden können: \lstinline|y<character var>(2:4) = "neu"|\\
-  \textbf{Strings aus Wiederholung erstellen:} \lstinline|<character var> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
-  \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character var> = trim(<character var>)|\\
+  \textbf{Strings ändern:} Strings können indiziert werden, sodass auch einzelne Zeichen gezielt geändert werden können: \lstinline|<character>(2:4) = "neu"|\\
+  \textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
+  \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character> = trim(<character>)|
   
-  \section{Kontrollstrukturen}
-  \subsection{Verzweigungen}
-  \begin{lstlisting}[caption={\bfseries Einzeilige if-Anweisung}]
+    \section{Konstanten}
+  \textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
+  \textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>| \\
+  \textbf{Konstanten immer komplett in Großbuchstaben benennen}
+  
+  \section{Verzweigungen (if-Strukturen)}
+  \begin{lstlisting}[caption={\bfseries Verzweigungen mit if}]
+    ! einzeilige if-Anweisung
     if (<logical>) <einzelne Anweisung>
-  \end{lstlisting}
-  \begin{lstlisting}[caption={if-then}]
+    
+    ! if-then
     if (<logical>) then
       <Anweisung(en)>
     endif
-  \end{lstlisting}
-  \begin{lstlisting}[caption={\bfseries if-then-else}]
+    
+    ! if-then-else
     if (<logical>) then
       <Anweisung(en) 1>
     else
       <Anweisung(en) 2>
     endif
-  \end{lstlisting}
-  \begin{lstlisting}[caption={\bfseries if-then-else-if-...-else}]
+    
+    ! if-then-else if-...-else
     if (<logical 1>) then
       <Anweisung(en) 1>
     else if (<logical 2>) then
@@ -162,27 +178,32 @@
       <Anweisung(en) 4>
     endif
   \end{lstlisting}
-  \subsection{Schleifen}
-  \begin{lstlisting}[caption={\bfseries do-Zählschleife (Schrittweite standardmäßig 1, kann auch negativ sein)}, label=lst:do-zahl]
-    do j<varname> = i<startwert>, i<endwert> [, i<schrittweite>]
+  
+  \section{Schleifen}
+  \begin{lstlisting}[caption={\bfseries do-Schleifen}]
+    ! do-Zaehlschleife (Schrittweite Standard 1, kann auch negativ sein)
+    do <loop integer> = <start integer>, <end integer> [, <step integer>]
       <Anweisung(en)>
     enddo
-  \end{lstlisting}
-  \begin{lstlisting}[caption={\bfseries do-while-Schleife}, label=lst:do-while]
+    
+    ! do-while-Schleife
     do while (<logical>)
       <Anweisung(en)>
       ! Wiederholung bis <logical> .eqv. .false.
     enddo
-  \end{lstlisting}
-  \begin{lstlisting}[caption={\bfseries do-Schleife (CAVE!)}, label=lst:do]
+    
+    ! do-Schleife (CAVE!)
     do
       <Anweisung(en)>
       ! Anweisungen werden immer wiederholt bis..
       if (<logical>) exit ! forciert Ende
     enddo
+    
+    ! implizite do-Schleife, Beispiel
+    write(*,*) i_array(j_index), j_index=1, I_MAX
   \end{lstlisting}
- \textbf{Schleifensteuerung:} \lstinline|exit| sorgt für sofortiges Beenden der Schleife (sind Schleifen verschachtelt und nicht benannt, wird nur aktueller Schleifenkontext verlassen), \lstinline|cycle| sorgt für sofortigen Sprung zum Anfang der Schleife (für beide: egal, was danach noch im Code kommt)
-  \begin{lstlisting}[caption={\bfseries Benannte do-Schleifen und explizites exit}]
+ \textbf{Schleifensteuerung:} \lstinline|exit| sorgt für sofortiges Beenden der Schleife (sind Schleifen verschachtelt und nicht benannt, wird nur aktueller Schleifenkontext verlassen), \lstinline|cycle| sorgt für sofortigen Sprung zum Anfang der Schleife 
+  \begin{lstlisting}[caption={\bfseries Beispiel: Benannte do-Schleifen und explizites exit}]
     outer: do j_outer = 0, 5
       middle: do j_middle = 1, 4
         if (<logical>) exit outer
@@ -192,30 +213,33 @@
       enddo middle
     enddo outer
   \end{lstlisting}
- \textbf{Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördern Lesbarkeit\\
-  \textbf{Faustregel für Schleifenauswahl:} Weiß man (konkret oder abstrakt aus vorherigen Anweisungen) wie oft genau etwas gemacht werden muss, dann wählt man eine do-Zählschleife (\cref{lst:do-zahl}), ist das nicht (genau) bekannt, eine do-while-Schleife (\cref{lst:do-while})
+ \textbf{Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördert Lesbarkeit\\
+  \textbf{Faustregel für Schleifenauswahl:} weiß man (konkret oder abstrakt aus vorherigem Programmverlauf) wie oft genau etwas gemacht werden muss: do-Zählschleife, ist das nicht (genau) bekannt: do-while-Schleife.
   
   \section{Felder/Arrays}
-  Alle Werte in einem Feld haben den \textbf{gleichen Typ von Variable} \lstinline|<vartype>|\\
-  Arrays haben einen (unveränderlichen) \textbf{rank} (Anzahl Dimensionen). Jede Dimension hat einen (unveränderlichen) shape \textbf{shape} (Anzahl Elemente pro Dimension) und einen (unveränderlichen) \textbf{extent} (Integer-Bereich, den die Indizes abdecken)\\
-  Es kann \textbf{höchstens 7 Dimensionen} geben, die nicht alle den gleichen shape haben müssen. Wird nur ein shape \lstinline|n| angegeben, ist der \textbf{Start-Index standardmäßig 1} und der End-Index \lstinline|n|. Wird ein extent \lstinline|m:n| angegeben, so ist der shape automatisch gleich $n-m+1$.
-  \begin{lstlisting}[caption={\bfseries Deklarationsmöglichkeiten arrays}]
-    ! EINE DIMENSION
+  \textbf{Variablentyp:} für alle Werte in einem Feld  gleich\\
+  \textbf{Arrays} haben einen (unveränderlichen) \textbf{rank} (Anzahl Dimensionen). Jede Dimension hat einen (unveränderlichen) shape \textbf{shape} (Anzahl Elemente pro Dimension) und einen (unveränderlichen) \textbf{extent} (Integer-Bereich, den die Indizes abdecken)\\
+  \textbf{höchstens 7 Dimensionen}, nicht unbedingtgleicher shape\\
+  \textbf{Nur shape \lstinline|n| angeben:} extent automatisch \lstinline|1:n|\\
+  \textbf{Nur extent \lstinline|m:n| angegeben:} shape automatisch $n-m+1$.
+  \begin{lstlisting}[caption={\bfseries Deklarationsmöglichkeiten für arrays}]
+    ! EINE DIMENSION (Vektor)
     ! nur shape=n setzen, Start-Index 1:
-    <vartype>, dimension(<n>) :: <vektorname>
+    <type>, dimension(n) :: <varname>
     ! extent mit eigenem Start-Index m:
-    <vartype>, dimension(<m>:<n>) ::  <vektorname>
-    ! ZWEI DIMENSIONEN
-    ! nur shapes setzen:
-    <vartype>, dimension(<shape 1>, <shape 2>) :: <matrixname>
+    <type>, dimension(m:n) :: <varname>
+    
+    ! ZWEI DIMENSIONEN (2D-Matrix)
+    ! nur shapes n1, n2 setzen:
+    <type>, dimension(n1, n2) :: <varname>
     ! extents setzen:
-    <vartype>, dimension(<m1>:<n1>, <m2>:<n2>) :: <natrixname>
+    <type>, dimension(m1:n1, m2:n2) :: <varname>
     
     ! ALTERNATIV auch Deklaration rechts moeglich
     ! nur shape
-    <vartype> :: <vektorname>(4)
+    <type> :: <varname>(n)
     ! mit extent
-    <vartype> :: <matrixname>(0:9, 0:9)
+    <type> :: <varname>(m1:n1, m2:n2)
   \end{lstlisting}
   \begin{lstlisting}[caption={\bfseries Beispiele direkte Definition arrays}]
     ! Wochentage
@@ -224,98 +248,88 @@
     real, dimension(3) :: z_g=\(0, 0, -9.81\)
   \end{lstlisting}
   \textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension\\
-  \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<integervektorname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<integervektorname> = 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
+  \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname> = 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
   Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
-  \textbf{WICHTIG:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden
-  
-  \section{Konstanten}
-  Konstanten nutzen, sobald eine bestimmte Zahl mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
-  \textbf{Definition von Konstanten direkt im Deklarationsteil:} \lstinline|<vartype>, parameter :: <CONSTNAME>=<constwert>| \\
- \textbf{Konstanten immer komplett in Großbuchstaben benennen}
- \section{Eingabe und Ausgabe}
+  \textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden
+ 
+ \section{Ein- und Ausgabe}
  \subsection{Grundlagen}
- \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <var>|\\
- \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <var>|\\
- \textbf{Standard-Argument:} \lstinline|(*,*)|\\
- \textbf{Datei lesen/schreiben:} \lstinline|(unit=<unit integer>, *)|\\
- \textbf{Formatierung beeinflussen:} \lstinline|(*,<format character>)|\\
- \textbf{Kombination:} möglich, aber \textbf{Einlesen von Dateien sollte in Standard-Formatierung erfolgen} (\lstinline|read(unit=<unit integer>, *)|), da Formatierung stark fehleranfällig beim Einlesen
+ \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <varname>|\\
+ \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <Wert>|\\
+ \textbf{Datei lesen/schreiben:} \lstinline|(unit=<integer>, *)|\\
+ \textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|\\
+ \textbf{Kombination:} möglich, aber \textbf{Einlesen von Dateien sollte in Standard-Formatierung erfolgen} (\lstinline|read(unit=<integer>, *)|), da Formatierung stark fehleranfällig beim Einlesen
  
  \subsection{Dateien lesen/schreiben}
- \subsubsection{Datei öffnen}
- \textbf{Grundlegendes Kommando:} \lstinline|open(unit=<integer>,file=<filename character>...)|\\
- \textbf{Unit:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig können Peripheriegeräte sein)\\
- \textbf{File:} relativ wenn im gleichen Ordner, sonst Pfad mit angeben\\
- \textbf{Status:} \lstinline|status=<status character>| mit Möglichkeiten \lstinline|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
- \textbf{Action:} \lstinline|action=<action character>| mit den Möglichkeiten \lstinline|"read", "write", "readwrite" (default)|\\
- \textbf{Fehlervariable:} \lstinline|iostat=<integer var>|, ist \lstinline|<integer var>|$\neq 0$, gab es Fehler, z.B. bei EOF (End of File), \textbf{Wichtig: immer nutzten!}\\
+ \textbf{Grundlegendes Kommando (Pflichtargumente):} \lstinline|open(unit=<integer>,file=<character>)|\\
+ \textbf{\lstinline|unit|:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig könnten Peripheriegeräte sein)\\
+ \textbf{\lstinline|file|:} Dateiname wenn im gleichen Ordner, sonst mit Pfad\\
+ \textbf{Status:} \lstinline|status=<status>| mit Möglichkeiten \lstinline|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
+ \textbf{Aktion:} \lstinline|action=<action>| mit den Möglichkeiten \lstinline|"read", "write", "readwrite" (default)|\\
+ \textbf{Fehlervariable:} \lstinline|iostat=<integername>|, ist \lstinline|<integername>| $\neq 0$, gab es Fehler, z.B. EOF (End of File), \textbf{immer prüfen!}\\
  \textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline|(default)| werden soll\\
- \textbf{Format:} \lstinline|form=<form character>| mit den Möglichkeiten \lstinline|"formatted" (default), "unformatted"|
- \subsubsection{Weitere Datei-Anweisungen}
- \textbf{Datei schließen:} \lstinline|close(unit=<unit integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt\\
- \textbf{Existenzprüfung:} \lstinline|inquire(file=<filename character>, exist=<exist logical>)| gibt an, ob eine Datei existiert\\
- \textbf{Zurücksetzen:} \lstinline|rewind(unit=<unit integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
- \textbf{Eine Zeile zurück:} \lstinline|backspace(unit=<unit integer>)| setzt Position der Datei um einen record (=Zeile) zurück
+ \textbf{Format:} ohne Format mit \lstinline|form="unformatted"|\\
+ \textbf{Datei schließen:} \lstinline|close(unit=<integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt\\
+ \textbf{Existenzprüfung:} gibt an, ob eine Datei existiert \lstinline|inquire(file=<character>, exist=<logicalname)| \\
+ \textbf{Zurücksetzen:} \lstinline|rewind(unit=<integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
+ \textbf{Eine Zeile zurück:} \lstinline|backspace(unit=<integer>)| setzt Position der Datei um einen record (=Zeile) zurück
  
  \subsection{Formatierung}
- \textbf{Grundform Format-String:} \lstinline|"(<format>)"|\\
- \textbf{Mögliche Zahlenangaben:}  Datenfeldweite (muss groß genug sein, sonst werden Sterne statt Zahl ausgegeben, unten \lstinline|w|), Anzahl Dezimalstellen (unten \lstinline|d|), Anzahl Ziffern im Exponenten (unten \lstinline|e|), Anzahl ausgegebener Ziffern (ggf. führende Nullen hinzugefügt, unten \lstinline|m|)\\
+ \textbf{Grundform Format-String:} \lstinline|"(<character>)"|\\
+ \textbf{Mögliche Zahlenangaben:}  Datenfeldweite (muss groß genug sein, Dezimalpunkt zählt mit, unten \lstinline|w|), Anzahl Dezimalstellen (unten \lstinline|d|), Anzahl Ziffern im Exponenten (unten \lstinline|e|), Anzahl ausgegebener Ziffern (ggf. führende Nullen hinzugefügt, unten \lstinline|m|)\\
  \textbf{\lstinline|integer|:} \lstinline|Iw[.m]|\\
- \textbf{\lstinline|real|:} Fixpunktdarstellung: \lstinline|Fw.d| (\lstinline|w|$\geq$\lstinline|d|$+2$), Exponentialdarstellung: \lstinline|Ew.d| (\lstinline|w|$\geq$\lstinline|d|$+7$), Exponentialdarstellung mit fester Ziffernzahl im Exponenten: \lstinline|Ew.dEe| (\lstinline|w|$\geq$\lstinline|d|$+$\lstinline|e|$+5$), Exponentialdarstellung mit fester Zahl an \lstinline|n| Stellen vor dem Komma: \lstinline|nPEw.d|, automatische Wahl von \lstinline|F| oder \lstinline|E| Format: \lstinline|Gw.d|\\
+ \textbf{\lstinline|real|:} Fixpunktdarstellung: \lstinline|Fw.d| (wobei \lstinline|w|$\geq$\lstinline|d|$+2$), Exponentialdarstellung: \lstinline|Ew.d| (wobei \lstinline|w|$\geq$\lstinline|d|$+7$), Exponentialdarstellung mit fester Exponentenlänge: \lstinline|Ew.dEe| (wobei \lstinline|w|$\geq$\lstinline|d|$+$\lstinline|e|$+5$), Exponentialdarstellung mit fester Stellenzahl \lstinline|n| vor dem Komma: \lstinline|nPEw.d|, automatische Wahl von \lstinline|F| oder \lstinline|E| Format: \lstinline|Gw.d|\\
  \textbf{\lstinline|character|:} \lstinline|A[w]|\\
  \textbf{\lstinline|logical|:} \lstinline|Lw|\\
  \textbf{Positionierung in \lstinline|n|ter Spalte (Tabulator):} \lstinline|Tn|\\
  \textbf{Ausgabe von \lstinline|n| Leerstellen:} \lstinline|nX|\\
  \textbf{Zeilensprung:} \lstinline|/|\\
- \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<format>$)"|\\
- \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<format>)|, bzw. \lstinline|n(<character>)|\\
- \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder gar zwischendurch verändert werden soll
+ \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<character>$)"|\\
+ \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<character>)|\\
+ \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll
  
   \section{Unterprogramme und Module}
-  \textbf{Nutzung:} zur häufigeren Verwendung von Anweisungen und/oder zur Übersichtlichkeit\\
   \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
-  \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutinename>(<Argument(e)>)|\\
-  \textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<var> = <functionname>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<vartype> :: <functionname>|\\
-  \textbf{CAVE:} andere Namenskonventionen für Argumente: \lstinline|integer|-Namen beginnen mit \lstinline|k|, \lstinline|real|-Namen mit \lstinline|p|\\
-  \textbf{Deklarationen in Unterprogrammen:}  es wird auch angegeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), ohne Beachtung von Originalwert ausgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
+  \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutine>(<Argument(e)>)|\\
+  \textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname> = <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type> :: <function>|\\
+  \textbf{Deklarationen in Unterprogrammen:}  es wird auch angegeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), unabhängig vom Originalwert nach Abschluss zurückgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
   \textbf{CAVE:} \textbf{Anzahl und Reihenfolge der Argumente} müssen zwischen Deklaration und Aufruf übereinstimmen!\\
+  \textbf{Variable Längendeklaration:} ist z.B. String-Länge  eines einzugebenden Arguments in Unterprogramm nicht bekannt, kann sie mit \lstinline|character(len=*) :: <Argument>| deklariert werden\\
   \textbf{Module:} enthalten nicht ausführbaren  Programminhalt (Deklarationen, Wertzuweisungen, ...), der von allen Unterprogrammen genutzt werden soll, bei Einzelkompilierung müssen sie zuerst kompiliert werden\\
   \textbf{Einbindung Modul in (Unter-)Programmen:} \lstinline|use <modulename>|
   \textbf{CAVE:} auch wenn zwischenzeitlich im Vergleich zur Initialisierung im Modul geändert, haben alle Unterprogramme auf den \textbf{aktuellen Zustand einer Modul-Variable} im Programmverlauf Zugriff\\
-  \textbf{Lokale Variablen:} wird eine Variable nicht über ein modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)
-  \begin{lstlisting}[caption={\textbf{Aufbau Unterprogramme und Module (analog zu Hauptprogramm)}}]
+  \textbf{Lokale Variablen:} wird eine Variable nicht über ein Modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)
+  \begin{lstlisting}[caption={\bfseries Dateischema Modul, Haupt- und Unterprogramme }]
     module <modulename>
     ! erklaerender Kommentar
     implicit none
-    <Deklaration und Definition von globalen Konstanten>
-    <Deklaration und ggf. Initialisierung von globalen Variablen>
-    end module <modulname>
+    <globale Deklarationen, Definitionen, Initialisierungen>
+    end module <modulename>
     
     program <progname>
     ! erklaerender Kommentar
     use <modulename>
     implicit none
-    <Deklaration und Definition lokaler Konstanten>
-    <Deklaration und ggf. Initialisierung von lokalen Variablen und zu nutzenden Funktionen>
+    <lokale Deklarationen (auch zu nutzende Funktionen), Definitionen, Initialisierungen>
     <Anweisungsteil>
     stop
     end program <progname>
     
-    <vartype> function <functionname>(<Arugment(e)>)
+    <type> function <funcname>(<Arugment(e)>)
     ! erklaerender Kommentar
     use <modulename>
     implicit none
-    <vartype>, intent(<intent>) :: <arugmentname>
+    <type>, intent(<intent>) :: <argname>
     <weitere lokale Deklarationen, Definitionen, Initialisierungen>
     <Anweisungen>
     return
-    end function <functionname>
+    end function <funcname>
     
     subroutine <subname>(<Arguemt(e))
     ! erklaerender Kommentar
     use <modulename>
     implicit none
-    <vartype>, intent(<intent>) :: <arugmentname>
+    <type>, intent(<intent>) :: <argname>
     <weitere lokale Deklarationen, Definitionen, Initialisierungen>
     <Anweisungen>
     return
@@ -331,5 +345,5 @@
     gfortran -c <subprogname>.f90 
     gfortran -o <progname>.x <programe>.o <subprogname>.o <modulename>.o
   \end{lstlisting}
-  \textbf{Temporäre Dateien:} die bei Einzelkompilierung von Unterprogrammen und Modulen erzeugten Dateien \lstinline|*.o| und \lstinline|*.mod| werden nach Kompilierung nicht mehr benötigt und können gelöscht werden
+  \textbf{Temporäre Dateien:} die bei Einzelkompilierung von Unterprogrammen und Modulen erzeugten Dateien werden nach Kompilierung nicht mehr benötigt und können gelöscht werden
 \end{document}
