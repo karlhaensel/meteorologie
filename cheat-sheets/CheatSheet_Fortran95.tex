@@ -54,18 +54,21 @@
 
 \lstdefinestyle{neutral}{
   language=bash,
-  basicstyle=\ttfamily\small,
-  numbers=left,
-  xleftmargin=1pt,
-  framexleftmargin=1pt,
-  numberstyle=\tiny\color{gray},
-  backgroundcolor=\color{white},
+  basicstyle=\ttfamily\footnotesize,
   frame=single,
-  rulecolor=\color{black},
-  captionpos=b,
+  xleftmargin=-12pt,
+  framexleftmargin=-20pt,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=-14pt,
+  stepnumber=1,
+  breaklines=true,
+  tabsize=4,
+  showstringspaces=false,
+  captionpos=t,
+  escapeinside={(*@}{@*)}, % Ermöglicht LaTeX-Befehle innerhalb von Listings
   commentstyle=\color{black},
   stringstyle=\color{black},
-  showstringspaces=false,
   keywordstyle=\color{black}, 
   morekeywords={}
 }
@@ -114,10 +117,15 @@
   \section{Datentypen}
   \subsection{Zahlen}
   \textbf{Ganze Zahlen:} \lstinline|integer| haben in Fortran 90/95 eine Tiefe von 32 Bit, also einen Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$\\
+  \textbf{CAVE:} \lstinline|<integer var> = 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
+  \textbf{Rest einer Division:} \lstinline|mod(<number 1>, <number 2>)| liefert Rest der Division (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
   \textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real var> = real(<integer var>)|\\
-  \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
+  \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)\\
+  \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| wirklich nur, wenn es um Anzahlen oder Indizes geht, soll gerechnet werden, dann als \lstinline|real|\\
+  \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
+  \textbf{Absolutbetrag einer Zahl:} \lstinline|abs(<number>)|
   \subsection{Zeichenketten (\glqq Strings\grqq)}
-  \textbf{ Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
+  \textbf{Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
   \begin{lstlisting}[caption={\bfseries String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
     y_srting = "String 1" // &
     "String 2"
@@ -262,8 +270,66 @@
  \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<format>$)"|\\
  \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<format>)|, bzw. \lstinline|n(<character>)|\\
  \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder gar zwischendurch verändert werden soll
-  
+ 
+  \section{Unterprogramme und Module}
+  \textbf{Nutzung:} zur häufigeren Verwendung von Anweisungen und/oder zur Übersichtlichkeit\\
+  \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
+  \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutinename>(<Argument(e)>)|\\
+  \textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<var> = <functionname>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<vartype> :: <functionname>|\\
+  \textbf{CAVE:} andere Namenskonventionen für Argumente: \lstinline|integer|-Namen beginnen mit \lstinline|k|, \lstinline|real|-Namen mit \lstinline|p|\\
+  \textbf{Deklarationen in Unterprogrammen:}  es wird auch angegeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), ohne Beachtung von Originalwert ausgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
+  \textbf{CAVE:} \textbf{Anzahl und Reihenfolge der Argumente} müssen zwischen Deklaration und Aufruf übereinstimmen!\\
+  \textbf{Module:} enthalten nicht ausführbaren  Programminhalt (Deklarationen, Wertzuweisungen, ...), der von allen Unterprogrammen genutzt werden soll, bei Einzelkompilierung müssen sie zuerst kompiliert werden\\
+  \textbf{Einbindung Modul in (Unter-)Programmen:} \lstinline|use <modulename>|
+  \textbf{CAVE:} auch wenn zwischenzeitlich im Vergleich zur Initialisierung im Modul geändert, haben alle Unterprogramme auf den \textbf{aktuellen Zustand einer Modul-Variable} im Programmverlauf Zugriff\\
+  \textbf{Lokale Variablen:} wird eine Variable nicht über ein modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)
+  \begin{lstlisting}[caption={\textbf{Aufbau Unterprogramme und Module (analog zu Hauptprogramm)}}]
+    module <modulename>
+    ! erklaerender Kommentar
+    implicit none
+    <Deklaration und Definition von globalen Konstanten>
+    <Deklaration und ggf. Initialisierung von globalen Variablen>
+    end module <modulname>
+    
+    program <progname>
+    ! erklaerender Kommentar
+    use <modulename>
+    implicit none
+    <Deklaration und Definition lokaler Konstanten>
+    <Deklaration und ggf. Initialisierung von lokalen Variablen und zu nutzenden Funktionen>
+    <Anweisungsteil>
+    stop
+    end program <progname>
+    
+    <vartype> function <functionname>(<Arugment(e)>)
+    ! erklaerender Kommentar
+    use <modulename>
+    implicit none
+    <vartype>, intent(<intent>) :: <arugmentname>
+    <weitere lokale Deklarationen, Definitionen, Initialisierungen>
+    <Anweisungen>
+    return
+    end function <functionname>
+    
+    subroutine <subname>(<Arguemt(e))
+    ! erklaerender Kommentar
+    use <modulename>
+    implicit none
+    <vartype>, intent(<intent>) :: <arugmentname>
+    <weitere lokale Deklarationen, Definitionen, Initialisierungen>
+    <Anweisungen>
+    return
+    end subroutine <subname>
+  \end{lstlisting}
   \section{Kompilieren}
-  \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
-  \textbf{Mehr Fehlermeldungen vorab} (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <name>.x <name>.f90|
+  \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <progname>.x <progname>.f90| \\
+  \textbf{Mehr Fehlermeldungen vorab} (z.B. bei Division durch 0 oder Verwendung von Variablen vor Wertzuweisung): \lstinline[style=neutral]|gfortran -ffpe-trap=invalid,zero,overflow -finit-real=snan <progname>.x <progname>.f90|\\
+  \textbf{Bei Unterprogrammnutzung:} \lstinline[style=neutral]|gfortran -o <progname>.x <progname>.f90 <subprogname>.f90| oder alternativ:
+  \begin{lstlisting}[style=neutral,caption={\textbf{Kompilieren von Haupt- und Unterprogrammenn}}]
+    gfortran -c <modulename>.f90  ! zuerst!
+    gfortran -c <progname>.f90 
+    gfortran -c <subprogname>.f90 
+    gfortran -o <progname>.x <programe>.o <subprogname>.o <modulename>.o
+  \end{lstlisting}
+  \textbf{Temporäre Dateien:} die bei Einzelkompilierung von Unterprogrammen und Modulen erzeugten Dateien \lstinline|*.o| und \lstinline|*.mod| werden nach Kompilierung nicht mehr benötigt und können gelöscht werden
 \end{document}
