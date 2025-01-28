@@ -79,8 +79,6 @@
 % Cleveref
 \usepackage{cleveref}
 \crefname{listing}{Code-Beispiel}{Code-Beispiele}
-\Crefname{listing}{Code-Beispiel}{Code-Beispiele}
-
 
 \begin{document}
   
@@ -89,9 +87,11 @@
   \section{Formalia laut FOPS}
   \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaut oder ß), nicht case sensitive, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
  \textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche (ohne Umlaute!), immer vor Deklaration \lstinline|implicit none| setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben\\
- \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|
+ \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l<name>|, character \lstinline|y<name>|, loop indices \lstinline|j<name>|, local integers \lstinline|i<name>|, subprogram integer arguments \lstinline|k<name>|, local reals \lstinline|z<name>|, subprogram real arguments \lstinline|p<name>|, complex numbers \lstinline|c<name>|\\
  \textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
   \section{Operatoren}
+  \textbf{Deklaration von Variablen:} \lstinline|<vartype> :: <varname>|\\
+  \textbf{Zuweisung von Variablen:} \lstinline|<varname> = <Wert>|\\
   \textbf{Hierarchie der Operatoren:}
   \begin{enumerate}
     \item Geklammerte Ausdrücke \lstinline|( )|
@@ -111,8 +111,20 @@
   \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des entsprechenden ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
   \textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen Programm nicht
   
-  \section{Zahlen}
-  \lstinline|integer| haben in Fortran 90/95 eine Tiefe von 32 Bit, also einen Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$
+  \section{Datentypen}
+  \subsection{Zahlen}
+  \textbf{Ganze Zahlen:} \lstinline|integer| haben in Fortran 90/95 eine Tiefe von 32 Bit, also einen Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$\\
+  \textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real var> = real(<integer var>)|\\
+  \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
+  \subsection{Zeichenketten (\glqq Strings\grqq)}
+  \textbf{ Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
+  \begin{lstlisting}[caption={\bfseries String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
+    y_srting = "String 1" // &
+    "String 2"
+  \end{lstlisting}
+  \textbf{Strings ändern:} Strings können wir arrays indiziert werden, sodass auch einzelne Zeichen gezielt geändert werden können: \lstinline|y<character var>(2:4) = "neu"|\\
+  \textbf{Strings aus Wiederholung erstellen:} \lstinline|<character var> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
+  \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character var> = trim(<character var>)|\\
   
   \section{Kontrollstrukturen}
   \subsection{Verzweigungen}
@@ -172,7 +184,7 @@
       enddo middle
     enddo outer
   \end{lstlisting}
- \textbf{ Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördern Lesbarkeit\\
+ \textbf{Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördern Lesbarkeit\\
   \textbf{Faustregel für Schleifenauswahl:} Weiß man (konkret oder abstrakt aus vorherigen Anweisungen) wie oft genau etwas gemacht werden muss, dann wählt man eine do-Zählschleife (\cref{lst:do-zahl}), ist das nicht (genau) bekannt, eine do-while-Schleife (\cref{lst:do-while})
   
   \section{Felder/Arrays}
@@ -211,16 +223,45 @@
   \section{Konstanten}
   Konstanten nutzen, sobald eine bestimmte Zahl mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
   \textbf{Definition von Konstanten direkt im Deklarationsteil:} \lstinline|<vartype>, parameter :: <CONSTNAME>=<constwert>| \\
- \textbf{ Konstanten immer komplett in Großbuchstaben benennen}
-  \section{Formatierung und Strings}
- \textbf{ Strings verbinden:} \lstinline|y_string = "String 1"   // "String 2"|
-  \begin{lstlisting}[caption={\bfseries String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
-    y_srting = "String 1" // &
-               "String 2"
-  \end{lstlisting}
-  
-  \section{Nützliche integrierte Funktionen}
-  \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)
+ \textbf{Konstanten immer komplett in Großbuchstaben benennen}
+ \section{Eingabe und Ausgabe}
+ \subsection{Grundlagen}
+ \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <var>|\\
+ \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <var>|\\
+ \textbf{Standard-Argument:} \lstinline|(*,*)|\\
+ \textbf{Datei lesen/schreiben:} \lstinline|(unit=<unit integer>, *)|\\
+ \textbf{Formatierung beeinflussen:} \lstinline|(*,<format character>)|\\
+ \textbf{Kombination:} möglich, aber \textbf{Einlesen von Dateien sollte in Standard-Formatierung erfolgen} (\lstinline|read(unit=<unit integer>, *)|), da Formatierung stark fehleranfällig beim Einlesen
+ 
+ \subsection{Dateien lesen/schreiben}
+ \subsubsection{Datei öffnen}
+ \textbf{Grundlegendes Kommando:} \lstinline|open(unit=<integer>,file=<filename character>...)|\\
+ \textbf{Unit:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig können Peripheriegeräte sein)\\
+ \textbf{File:} relativ wenn im gleichen Ordner, sonst Pfad mit angeben\\
+ \textbf{Status:} \lstinline|status=<status character>| mit Möglichkeiten \lstinline|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
+ \textbf{Action:} \lstinline|action=<action character>| mit den Möglichkeiten \lstinline|"read", "write", "readwrite" (default)|\\
+ \textbf{Fehlervariable:} \lstinline|iostat=<integer var>|, ist \lstinline|<integer var>|$\neq 0$, gab es Fehler, z.B. bei EOF (End of File), \textbf{Wichtig: immer nutzten!}\\
+ \textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline|(default)| werden soll\\
+ \textbf{Format:} \lstinline|form=<form character>| mit den Möglichkeiten \lstinline|"formatted" (default), "unformatted"|
+ \subsubsection{Weitere Datei-Anweisungen}
+ \textbf{Datei schließen:} \lstinline|close(unit=<unit integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt\\
+ \textbf{Existenzprüfung:} \lstinline|inquire(file=<filename character>, exist=<exist logical>)| gibt an, ob eine Datei existiert\\
+ \textbf{Zurücksetzen:} \lstinline|rewind(unit=<unit integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
+ \textbf{Eine Zeile zurück:} \lstinline|backspace(unit=<unit integer>)| setzt Position der Datei um einen record (=Zeile) zurück
+ 
+ \subsection{Formatierung}
+ \textbf{Grundform Format-String:} \lstinline|"(<format>)"|\\
+ \textbf{Mögliche Zahlenangaben:}  Datenfeldweite (muss groß genug sein, sonst werden Sterne statt Zahl ausgegeben, unten \lstinline|w|), Anzahl Dezimalstellen (unten \lstinline|d|), Anzahl Ziffern im Exponenten (unten \lstinline|e|), Anzahl ausgegebener Ziffern (ggf. führende Nullen hinzugefügt, unten \lstinline|m|)\\
+ \textbf{\lstinline|integer|:} \lstinline|Iw[.m]|\\
+ \textbf{\lstinline|real|:} Fixpunktdarstellung: \lstinline|Fw.d| (\lstinline|w|$\geq$\lstinline|d|$+2$), Exponentialdarstellung: \lstinline|Ew.d| (\lstinline|w|$\geq$\lstinline|d|$+7$), Exponentialdarstellung mit fester Ziffernzahl im Exponenten: \lstinline|Ew.dEe| (\lstinline|w|$\geq$\lstinline|d|$+$\lstinline|e|$+5$), Exponentialdarstellung mit fester Zahl an \lstinline|n| Stellen vor dem Komma: \lstinline|nPEw.d|, automatische Wahl von \lstinline|F| oder \lstinline|E| Format: \lstinline|Gw.d|\\
+ \textbf{\lstinline|character|:} \lstinline|A[w]|\\
+ \textbf{\lstinline|logical|:} \lstinline|Lw|\\
+ \textbf{Positionierung in \lstinline|n|ter Spalte (Tabulator):} \lstinline|Tn|\\
+ \textbf{Ausgabe von \lstinline|n| Leerstellen:} \lstinline|nX|\\
+ \textbf{Zeilensprung:} \lstinline|/|\\
+ \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<format>$)"|\\
+ \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<format>)|, bzw. \lstinline|n(<character>)|\\
+ \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder gar zwischendurch verändert werden soll
   
   \section{Kompilieren}
   \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <name>.x <name>.f90| \\
