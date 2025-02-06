@@ -95,7 +95,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \section{Zahlen}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8)\\
 \textbf{CAVE:} \lstinline|<integer> = 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
-\textbf{Rest einer Division:} \lstinline|mod(<number 1>, <number 2>)| liefert Rest der Division (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
+\textbf{Modulo:} \lstinline|mod(<number 1>, <number 2>)| liefert \textbf{Rest der Division} (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
 \textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
 \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)\\
 \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| nur, wenn es um Anzahlen oder Indizes geht; soll gerechnet werden, dann als \lstinline|real|\\
