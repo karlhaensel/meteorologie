@@ -22,12 +22,20 @@
 \usepackage{xcolor}
 \usepackage{listings}
 \lstdefinelanguage{Fortran95}{
-  language=[95]Fortran,
   basicstyle=\ttfamily\small,
-  keywordstyle=\color{blue},
   commentstyle=\color{gray},
-  stringstyle=\color{purple},
-  morekeywords={xor, kind, module, use, implicit, none, integer, real, double, precision, complex, logical, character, parameter, dimension, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, write, read, print, format, open, close, rewind, backspace, inquire, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import}
+  stringstyle=\color{olive},
+  moredelim=[s][\color{purple}]{<}{>},  % Platzhalter in spitzen Klammern faerben
+  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import},
+  morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
+  morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim},  % built-in Prozeduren/Funktionen
+  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent}, % Standard-Argumente
+  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, },  % Datentypen etc
+  keywordstyle=\color{blue},
+  keywordstyle=[2]\color{cyan},
+  keywordstyle=[3]\color{brown},
+  keywordstyle=[4]\color{orange},
+  keywordstyle=[5]\color{violet}
 }
 \lstset{
   language=Fortran95,
@@ -72,8 +80,8 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 \textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
 
 \section{Operatoren}
-\textbf{Deklaration von Variablen:} \lstinline|<type> :: <varname>|\\
-\textbf{Zuweisung von Variablen:} \lstinline|<varname> = <Wert>|\\
+\textbf{Deklaration von Variablen:} \lstinline|<type>| \lstinline|:: <varname>|\\
+\textbf{Zuweisung von Variablen:} \lstinline|<varname>| \lstinline|= <Wert>|\\
 \textbf{Hierarchie der Operatoren:}
 \begin{enumerate}
   \item Geklammerte Ausdrücke \lstinline|( )|
@@ -94,10 +102,10 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 
 \section{Zahlen}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8)\\
-\textbf{CAVE:} \lstinline|<integer> = 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
+\textbf{CAVE:} \lstinline|<integer>| \lstinline|= 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
 \textbf{Modulo:} \lstinline|mod(<number 1>, <number 2>)| liefert \textbf{Rest der Division} (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
-\textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
-\textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird)\\
+\textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real>| \lstinline|= real(<integer>)|\\
+\textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer>| \lstinline|= nint(<real>)| (im Gegensatz zu \lstinline|<integer>| \lstinline|= <real>|, wo nur rationaler Teil abgeschnitten wird)\\
 \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| nur, wenn es um Anzahlen oder Indizes geht; soll gerechnet werden, dann als \lstinline|real|\\
 \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
 \textbf{Absolutbetrag einer Zahl:} \lstinline|abs(<number>)|
@@ -120,8 +128,8 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
   "String 2"
 \end{lstlisting}
 \textbf{Strings ändern:} Strings können indiziert werden, sodass auch einzelne Zeichen gezielt geändert werden können: \lstinline|<character>(2:4) = "neu"|\\
-\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
-\textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character> = trim(<character>)|
+\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character>| \lstinline|= repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
+\textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character>| \lstinline|= trim(<character>)|
 
 \section{Konstanten}
 \textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
@@ -226,7 +234,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
   real, dimension(3) :: z_g=\(0, 0, -9.81\)
 \end{lstlisting}
 \textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension\\
-\textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname> = 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
+\textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
 Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
 \textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden
 
@@ -269,7 +277,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \section{Unterprogramme und Module}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
 \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutine>(<Argument(e)>)|\\
-\textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname> = <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type> :: <function>|\\
+\textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
 \textbf{Deklarationen in Unterprogrammen:}  angeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), unabhängig vom Originalwert hinterher zurückgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
 \textbf{CAVE:} \textbf{Anzahl und Reihenfolge der Argumente} müssen zwischen Deklaration und Aufruf übereinstimmen!\\
 \textbf{Variable Längendeklaration:} ist z.B. String-Länge  eines einzugebenden Arguments in Unterprogramm nicht bekannt, kann sie mit \lstinline|character(len=*) :: <Argument>| deklariert werden\\
