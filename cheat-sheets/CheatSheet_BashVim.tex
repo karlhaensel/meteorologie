@@ -1,0 +1,211 @@
+% Dokumenten-Einstellungen
+\documentclass[a4paper, twocolumn]{scrarticle}
+\usepackage[left=1.5cm,right=1.5cm,top=1.5cm,bottom=1.5cm]{geometry}
+
+% Spracheinstellungen
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[ngerman]{babel}
+
+% Standard-Schrift auf footnoteisze  und serifenlos setzen
+\renewcommand{\normalsize}{\footnotesize}
+\AtBeginDocument{\normalsize}
+\renewcommand{\familydefault}{\sfdefault}
+
+% Caption-Nummerierung soll fettgedruckt sein
+\usepackage[labelfont=bf]{caption}
+
+\setlength{\parindent}{0pt} % Kein Einruecken beim Absatz
+\setlength{\columnsep}{24pt} % Abstand zwischen den Spalten
+
+% Syntax-Highlighting und Code-Umgebung
+\usepackage{xcolor}  % für Farben
+\usepackage{listings}  % für Code-Blöcke
+\lstdefinelanguage{Bash}{
+  keywords={if, then, else, fi, for, while, do, done, echo, exit, function, case, esac},
+  keywords=[2]{sed, grep, cut, head, tail, ssh, scp},
+  sensitive=true,    % Bash ist case-sensitive
+  moredelim=[s][\color{purple}]{<}{> \ },  % Platzhalter in spitzen Klammern faerben
+  morecomment=[l]{\#},   % Kommentare starten mit #
+  morestring=[b]{"},      % Strings in " "
+  morestring=[b]{'},      % Strings in ' '
+  keywordstyle=\color{orange}\bfseries,
+  keywordstyle=[2]\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{olive},
+  basicstyle=\ttfamily\small,
+  showstringspaces=true
+}
+% Stil für Makefile-Syntax
+\lstdefinelanguage{Makefile}{
+  morekeywords={all, clean, install, uninstall, .PHONY, include, export, ifeq, else, endif, define, endef},
+  morekeywords=[2]{CC, CFLAGS, LDFLAGS, RM, AR, AS, LD, MAKE, MAKEFLAGS}, % Typische Variablen
+  moredelim=[s][\color{purple}]{<}{> \ },  % Platzhalter in spitzen Klammern faerben
+  morecomment=[l]{\#},    % Kommentare mit #
+  morestring=[b]{"},        % Strings in " "
+  morestring=[b]{'},        % Strings in ' '
+  keywordstyle=\color{blue},
+  keywordstyle=[2]\color{orange}, % Variablen in einer anderen Farbe
+  commentstyle=\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\small,
+  showstringspaces=false,
+  tabsize=4
+}
+% Stil für Vim-Befehle
+\lstdefinelanguage{Vim}{
+  morekeywords={q, @, v, V, I, A, s, g, !},
+  morecomment=[l]{\"},     % Vim-Kommentare starten mit "
+  morestring=[b]',         % Strings in ' '
+  morestring=[b]",         % Strings in " "
+  moredelim=[s][\color{purple}]{<}{>},  % Platzhalter in spitzen Klammern faerben
+  moredelim=[s][\color{orange}]{[}{]},
+  keywordstyle=\color{blue}\bfseries,
+  commentstyle=\color{gray},
+  stringstyle=\color{purple},
+  basicstyle=\ttfamily\small,
+  showstringspaces=false
+}
+
+\lstset{
+  language=Bash,
+  basicstyle=\ttfamily\footnotesize,
+  frame=single,
+  xleftmargin=-6pt,
+  framexleftmargin=-8pt,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  numbersep=-2pt,
+  stepnumber=1,
+  breaklines=true,
+  tabsize=4,
+  showstringspaces=false,
+  captionpos=t
+}
+
+% Listing soll in Caption als 'Code' bezeichnet werden
+\renewcommand{\lstlistingname}{Code}
+
+% INLINE: \lstinline|<code>|
+% UMGEBUNG: \begin{lstlisting}[caption={[<shortcaption>]<Caption>}, label=<label>] <codeblock> \end{lstlisting}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=purple,
+  urlcolor=blue,
+  pdftitle={Protokoll}
+}
+\usepackage{cleveref}
+\crefname{section}{Abschnitt}{Abschnitte}
+\crefname{listing}{Code}{Codes}
+
+\begin{document}
+
+% Überschrift
+{\Huge  \textbf{\textsf{Bash, Make \& Vim Cheat Sheet}}} \ {\tiny (sehr unvollständig!)}\\
+Zusammenstellung: Karl Hänsel, Stand: \today
+
+\section{Bash}
+\subsection{Dateien und Ordner}
+\textbf{Symbolischer Link:} \lstinline|ln -s <quelle> <ziel>|\\
+\textbf{Metadaten aktualisieren oder neue, leere Datei erstellen:}\\
+\lstinline|touch <Datei>|
+
+\subsection{Pipes und Dateiausgabe}
+\textbf{Ausgabe eines Befehls als Argument eines anderen nutzen:} \\ \lstinline!<befehl1> <optionen1> <argumente1> | <befehl2>...!\\
+\textbf{Ausgabe eines Befehls in Datei umleiten:}\\
+\lstinline|<befehl> <optionen> <argumente> <Datei> |\\
+\textit{Pipes können mit Pipes sowie (mehrere) Pipes mit Dateiumleitung kombiniert werden!}
+
+\subsection{Dateien bearbeiten}
+\subsubsection{sed: Suchen, Ersetzen, Löschen, Einfügen}
+\textbf{CAVE:} Option \lstinline|-i| nimmt sofort alle Änderungen an Datei vor, vorher lieber einmal ohne überprüfen (dann nur Ausgabe der Änderungen in Konsole)\\
+\textbf{In Datei global suchen \& ersetzen:}\\\lstinline|sed -i 's/<such>/<ersetz>/'| \lstinline|<Datei>|\\
+\textbf{In bestimmten Zeile(n) suchen \& ersetzen:}\\ \lstinline|sed -i '<n>s/<such>/<erset/'| \lstinline|<Datei>|, wobei \lstinline|<n>| eine Zeilennummer oder ein Bereich mit \lstinline|<start>,<end>| sein kann\\
+\textbf{In Zeilen mit einem Muster suchen \& ersetzen:}\\ \lstinline|sed -i '/<Muster>/s/<such>/<ersetz>/'| \lstinline|<Datei>|\\
+\textbf{Zeilen löschen:} alles wie oben nur \lstinline|d| statt \lstinline|s|\\
+\textbf{Text einfügen:} nach Zeile \lstinline|n|: \lstinline|sed -i '<n>a\<text>'| \lstinline|<Datei>|, vor Zeile \lstinline|n|: \lstinline|sed -i '<n>i\<text>'| \lstinline|<Datei>|\\
+\textbf{Mehrere Änderungen:} mehrere Befehlszeichenketten nach \lstinline|sed|
+\subsubsection{grep: Muster in Zeilen finden}
+\textbf{Alle Zeilen mit Muster:} \lstinline|grep '<Muster>'| \lstinline|<Datei>|\\
+\textbf{Alle Zeilen OHNE Muster:} \lstinline|grep -v '<Muster>'| \lstinline|<Datei>|\\
+\textbf{Alle Dateien mit Muster:} \lstinline|grep -r '<Muster>'| \lstinline|<Ordner>|\\
+\textbf{Weitere Optionen:} \lstinline|-o| nur MIT Muster ausgeben (Standard),\\ \lstinline|-i| Groß-/Kleinschreibung ignorieren, \lstinline|-n| Zeilennummer anzeigen, \lstinline|-E| erweiterte reguläre Ausdrücke für Muster verwenden
+\subsubsection{cut: Spalten extrahieren}
+\textbf{Bestimmte Felder (Spalten) extrahieren mit Tab-Trennung:} \lstinline|cut -f <n> <Datei>|, dabei ist \lstinline|<n>| Spaltennummer, mehrere Spaltennummern \lstinline|<n1,n2>| oder Bereich \lstinline|<n1-n2>|\\
+\textbf{Anderes Trennzeichen wählen:}\\ \lstinline|cut -d '<Trennzeichen>'| \lstinline|-f <n> <Datei>|\\
+\textbf{Bestimmte Zeichen pro Zeile extrahieren:}\\
+\lstinline|cut -c <n>| (dabei \lstinline|<n>| wie oben)
+\subsubsection{head \& tail: Anfang \& Ende extrahieren}
+\textbf{Erste 10 Zeilen ausgeben:} \lstinline|head <Datei>|\\
+\textbf{Erste \lstinline|n| Zeilen ausgeben:} \lstinline|head -n <n> <Datei>|\\
+\textbf{Erste \lstinline|n| Zeichen ausgeben:} \lstinline|head -c <n> <Datei>|\\
+\textbf{Letzte 10 Zeilen ausgeben:} \lstinline|tail <Datei>|\\
+\textbf{Letzte \lstinline|n| Zeilen ausgeben:} \lstinline|tail -n <n> <Datei>|\\
+\textbf{Echtzeitanzeige der neuesten Einträge einer Datei:} \\ \lstinline|tail -f <Datei>| (z.B. für Log-Dateien)
+
+
+\subsection{Platzhalter}
+\textbf{Aktueller Ordner:} \lstinline|.|\\
+\textbf{Ebene über aktuellem Ordner:} \lstinline|..|\\
+\textbf{Alle Dateien in einem Ordner:} \lstinline|*|\\
+\textbf{Alle Dateien mit bestimmter Endung:} \lstinline|*.<endung>|
+
+\subsection{Befehl wiederholen (while true)}\label{sec:bash-whiletrue}
+\textbf{Befehl dauerhaft wiederholen} im Abstand von \lstinline|<integer>| Sekunden (bis Abbruch, z.B. durch Strg+C):\\ \lstinline|while true; do <befehl>; sleep <integer>; done|\\
+(am einfachsten in separatem Tab/Konsolenfenster)
+
+\subsection{SSH (Secure Shell)}
+\textbf{Remote-Zugriff auf Server in Konsole:}\\
+\lstinline|ssh <Benutzer>@<Server>|\\
+(anschließend Passworteingabe, Beenden mit \lstinline|exit|)\\
+\textbf{Kopieren zwischen Remote und lokal:}\\
+\lstinline|scp <Benutzer>@<Server>:<Remotepfad> <Lokalpfad>|\\
+(oder umgekehrt für Lokal zu Remote)
+
+\section{Make}
+\lstset{language=Makefile}
+\begin{lstlisting}[caption={\bfseries Vorlage \LaTeX-Makefile (Tab-Einrückungen wichtig!)}, label=code:make-latex]
+  # Name Haupt-Datei (ohne .tex)
+  DOC = main
+  
+  # Standardbefehl LaTex-Kompilierung
+  LATEX = pdflatex
+  BIBTEX = bibtex
+  
+  # Default-Target: PDF generieren
+  all: $(DOC).pdf
+  
+  # PDF aus der Haupt-.tex
+  $(DOC).pdf: $(DOC).tex
+    $(LATEX) $(DOC).tex
+    # nur ausgefuehrt falls Literatur:
+    $(BIBTEX) $(DOC) || true
+    $(LATEX) $(DOC).tex
+    # noch mal fuer korrekte Referenzen
+    $(LATEX) $(DOC).tex
+  
+  # clean entfernt Temporaerdateien
+  clean:
+    rm -f *.aux *.log *.out *.bbl *.blg *.toc *.lof *.lot *.nav *.snm *.vrb
+  
+  # fullcelan wie clean, aber auch PDF
+  fullclean: clean
+    rm -f $(DOC).pdf
+    
+\end{lstlisting}
+\textbf{Verwendung Makefile (Beispiel \LaTeX):}\\
+\LaTeX-Makefile als Datei \glqq Makefile\grqq im Projektverzeichnis speichern. Aufruf in Konsole über \lstinline|make| (wenn nicht mehrdeutig). Aufräumen temporärer Dateien dann mit \lstinline|make clean|. Temporäre Dateien und PDF löschen mit  \lstinline|make fullclean|. Alternativ möglich: eigenständiges Aufrufen des Befehls (aus vim heraus z.B. \lstinline|:!make|).
+
+\section{Vi(m)}
+\lstset{language=Vim}
+{\scriptsize \textit{(wenn nicht anders angegeben Befehle im Normal Mode)}}\\
+\textbf{Makro aufnehmen:} \lstinline|q<zeichen><befehle><zeichen>|\\
+\textbf{Makro (\lstinline|n| mal) ausführen:} \lstinline|<n>@<zeichen>|\\
+\textbf{Wechsel in Visual Mode (Markieren und anschließend auf Markierung Befehle anwenden):} zeichenweise: \lstinline|v|, zeilenweise: \lstinline|V|, blockweise: \lstinline|[STRG+]v| (in Windows bereits mit Einfügen belegt, dort: \lstinline|[STRG+ALT+]v|)\\
+\textbf{In mehreren Zeilen Einfügen:} Auswahl der Zeilen mit Visual Line Mode (\lstinline|V|), dann \lstinline|I<text>[ENTER]| für Zeilenanfang \lstinline|A<text>[ENTER]| für Zeilenende\\
+\textbf{Suchen und Ersetzen ganze Datei:} \lstinline|:%s/<such>/<ersetz>/g|\\
+\textbf{Suchen und Ersetzen Markierung:} nach Markieren mit Visual Mode wird bei Eingabe von \lstinline|:| automatisch eine Zeichenkette ergänzt, die ein Ausüben des anschließenden Befehls Suchen und Ersetzen (wie oben) auf markierte Region bewirkt\\
+\textbf{Konsolenbefehle nutzen:} \lstinline[language=Vim]|:!<befehl...>|
+\end{document}
