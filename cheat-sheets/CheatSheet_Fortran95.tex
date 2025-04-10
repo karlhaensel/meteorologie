@@ -26,7 +26,7 @@
   commentstyle=\color{gray},
   stringstyle=\color{olive},
   moredelim=[s][\color{purple}]{<}{>},  % Platzhalter in spitzen Klammern faerben
-  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import},
+  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent}, % Standard-Argumente
@@ -311,7 +311,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
   return
   end function <funcname>
   
-  subroutine <subname>(<Arguemt(e))
+  subroutine <subname>(<Arguemt(e)>)
   ! erklaerender Kommentar
   use <modulename>
   implicit none
