@@ -32,10 +32,12 @@
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent}, % Standard-Argumente
   morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, },  % Datentypen etc
   keywordstyle=\color{blue},
+  morekeywords=[6]{in, out, inout},
   keywordstyle=[2]\color{cyan},
   keywordstyle=[3]\color{brown},
   keywordstyle=[4]\color{orange},
-  keywordstyle=[5]\color{violet}
+  keywordstyle=[5]\color{violet},
+  keywordstyle=[6]\color{green}
 }
 \lstset{
   language=Fortran95,
@@ -87,7 +89,7 @@ Zusammenstellung: Karl Hänsel, Stand: \today
   \item Geklammerte Ausdrücke \lstinline|( )|
   \item Punktrechnung \lstinline|*, /|
   \item Strichrechnung \lstinline|+, -|
-  \item Vergleichsoperatoren \lstinline|==, /=, >, >=, <, <=|
+  \item Vergleichsoperatoren \lstinline[style=neutral]|==, /=, >, >=, <, <=|
   \item Negation \lstinline|.not.|
   \item Konjunktion \lstinline|.and.|
   \item Disjunktion und Kontravalenz \lstinline|.or., .xor.|
