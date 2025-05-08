@@ -239,7 +239,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
 Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
 \textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden\\
-\textbf{Standard-Funktionen für Felder:} \lstinline|maxval, minval| geben Minimum und Maximum für Zahlen zurück, \listline|maxloc, minloc| die entsprechenden Indizes als Felder, \lstinline|sum, size| geben Summe und Anzahl aller Feldwerte zurück
+\textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \listline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück
 
 \section{Ein- und Ausgabe}
 \subsection{Grundlagen}
