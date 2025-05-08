@@ -238,7 +238,8 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension\\
 \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
 Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
-\textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden
+\textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden\\
+\textbf{Standard-Funktionen für Felder:} \lstinline|maxval, minval| geben Minimum und Maximum für Zahlen zurück, \listline|maxloc, minloc| die entsprechenden Indizes als Felder, \lstinline|sum, size| geben Summe und Anzahl aller Feldwerte zurück
 
 \section{Ein- und Ausgabe}
 \subsection{Grundlagen}
