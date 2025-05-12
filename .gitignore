@@ -1,5 +1,6 @@
 # PYTHON
 .mypy_cache/
+.idea/
 
 # LATEX
 *.aux
