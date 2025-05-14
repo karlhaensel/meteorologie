@@ -1,4 +1,6 @@
 import numpy as np
+from scipy.optimize import curve_fit
+
 
 def windprofil_hellmann(v_1: float, h_1: float, h_2: float, alpha: float = 0.4) -> float:
     """
@@ -28,6 +30,23 @@ def windprofil_logarithmisch(v_r: float, h_r: float, h: float, z_0: float) -> fl
     """
     return v_r * np.log(h/z_0)/np.log(h_r/z_0)
 
+
+def windprofil_logarithmisch_fit(hs: tuple[float], Vs: tuple[float], h_r=hs[0], v_r=Vs[0]):
+    """
+    Fittet vertikales Windprofil als logarithmischen, um Rauigkeitslänge z_0 zu ermitteln,
+    unter Nutzung gemessener Höhen hs in m 
+    und gemessener Windgeschwindigkeiten vs in m/s auf diesen Höhen 
+    ggf. unter Nutzung angegebener Referenzwerte h_r und v_r (sonst standardmäßig erster Wert der Datenreihe)
+    """
+    # Funktion zum Fitten
+    def profil_fit(h, z_0):
+        return windprofil_logarithmisch(v_r, h_r, h, z_0)
+    
+    # Fitten
+    parameter, _ = curve_fit(profil_fit, hs, vs, bounds=(0.0001, 2))
+    
+    return parameter[0]. # z_0
+    
 
 if __name__ == '__main__':
     # Beispiel Hamburg (z_0 = 0.9 -> alpha = 0.34), Messung 4.4 m/s in h = 10 m
