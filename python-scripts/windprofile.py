@@ -33,12 +33,12 @@ def windprofil_logarithmisch(v_r: float, h_r: float, h: float, z_0: float) -> fl
 
 def windprofil_logarithmisch_fit(hs: tuple[float], vs: tuple[float]):
     """
-    Fittet vertikales Windprofil als logarithmischen, um Rauigkeitslänge z_0 zu ermitteln,
+    Fittet vertikales Windprofil als logarithmisch, um Rauigkeitslänge z_0 zu ermitteln
     unter Nutzung gemessener Höhen hs in m 
     und gemessener Windgeschwindigkeiten vs in m/s auf diesen Höhen 
-    gunter Nutzung Referenzwerte h_r und v_r (rster Wert der Datenreihe)
+    sowie mit Referenzwerten h_r und v_r (erster Wert der Datenreihe dafür angenommen)
     """
-    # Annahme
+    # Annahme erste Werte als Referenzwerte
     h_r=hs[0]
     v_r=vs[0]
     # Funktion zum Fitten
@@ -52,7 +52,7 @@ def windprofil_logarithmisch_fit(hs: tuple[float], vs: tuple[float]):
     
 
 if __name__ == '__main__':
-    # Beispiel Hamburg (z_0 = 0.9 -> alpha = 0.34), Messung 4.4 m/s in h = 10 m
+    print('Beispiel Hamburg (z_0 = 0.9 -> alpha = 0.34), Messung 4.4 m/s in h = 10 m')
     Z_0 = 0.9
     ALPHA = 0.33
     for h in (50, 120, 180, 220, 250, 280):
@@ -60,15 +60,20 @@ if __name__ == '__main__':
             f'{h:3} m: {windprofil_logarithmisch(4.4, 10, h, Z_0):6.2f} m/s (logarithmisch), '
             f'{windprofil_hellmann(4.4, 10, h, ALPHA):6.2f} m/s (Hellmann)'
         )
-    # Beispiel Stuttgart Umland (z_0 = 0.7), Messung 2.6 m/s in h = 7 m
+    
+    print('Beispiel Stuttgart Umland (z_0 = 0.7), Messung 2.6 m/s in h = 7 m')
     print(f'80 m Nabenhöhe: {windprofil_logarithmisch(2.6, 7, 80, 0.7):.2f} m/s')
-    # Beispiel gemessenes Windprofil, Annahme logarithmisch
+    
+    print('Beispiel gemessenes Windprofil, Annahme logarithmisch:')
     hoehen = (10, 50, 120, 180, 220, 250, 280)
     windgeschwindigkeiten = (3.4, 4.5, 5.7, 6.4, 6.8, 7.2, 7.5)
     z_0 = windprofil_logarithmisch_fit(hoehen, windgeschwindigkeiten)
-    print(f'{z_0=:.2f} m')
+    for h, v in zip(hoehen, windgeschwindigkeiten):
+        print(f'{h:3} m: {v=:6.2f} m/s')
+    print(f'ERGEBNIS: {z_0=:.2f} m')
     print('Gegenprobe:')
-    for h in (50, 120, 180, 220, 250, 280):
+    for h, v_test in zip((50, 120, 180, 220, 250, 280), windgeschwindigkeiten[1:]):
+        v = windprofil_logarithmisch(3.4, 10, h, z_0)
         print(
-            f'{h:3} m: {windprofil_logarithmisch(3.4, 10, h, z_0):6.2f} m/s (logarithmisch)'
+            f'{h:3} m: {v=:6.2f} m/s (Differenz {v-v_test=:6.2f} m/s'
         )
