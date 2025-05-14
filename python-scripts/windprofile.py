@@ -31,13 +31,16 @@ def windprofil_logarithmisch(v_r: float, h_r: float, h: float, z_0: float) -> fl
     return v_r * np.log(h/z_0)/np.log(h_r/z_0)
 
 
-def windprofil_logarithmisch_fit(hs: tuple[float], Vs: tuple[float], h_r=hs[0], v_r=Vs[0]):
+def windprofil_logarithmisch_fit(hs: tuple[float], vs: tuple[float]):
     """
     Fittet vertikales Windprofil als logarithmischen, um Rauigkeitslänge z_0 zu ermitteln,
     unter Nutzung gemessener Höhen hs in m 
     und gemessener Windgeschwindigkeiten vs in m/s auf diesen Höhen 
-    ggf. unter Nutzung angegebener Referenzwerte h_r und v_r (sonst standardmäßig erster Wert der Datenreihe)
+    gunter Nutzung Referenzwerte h_r und v_r (rster Wert der Datenreihe)
     """
+    # Annahme
+    h_r=hs[0]
+    v_r=vs[0]
     # Funktion zum Fitten
     def profil_fit(h, z_0):
         return windprofil_logarithmisch(v_r, h_r, h, z_0)
@@ -62,4 +65,10 @@ if __name__ == '__main__':
     # Beispiel gemessenes Windprofil, Annahme logarithmisch
     hoehen = (10, 50, 120, 180, 220, 250, 280)
     windgeschwindigkeiten = (3.4, 4.5, 5.7, 6.4, 6.8, 7.2, 7.5)
-    print(f'z_0 = {windprofil_logarithmisch_fit(hoehen, windgeschwindigkeiten):.2f} m')
+    z_0 = windprofil_logarithmisch_fit(hoehen, windgeschwindigkeiten)
+    print(f'{z_0=:.2f} m')
+    print('Gegenprobe:')
+    for h in (50, 120, 180, 220, 250, 280):
+        print(
+            f'{h:3} m: {windprofil_logarithmisch(3.4, 10, h, z_0):6.2f} m/s (logarithmisch)'
+        )
