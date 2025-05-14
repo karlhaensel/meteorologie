@@ -45,7 +45,7 @@ def windprofil_logarithmisch_fit(hs: tuple[float], Vs: tuple[float], h_r=hs[0], 
     # Fitten
     parameter, _ = curve_fit(profil_fit, hs, vs, bounds=(0.0001, 2))
     
-    return parameter[0]. # z_0
+    return parameter[0] # z_0
     
 
 if __name__ == '__main__':
@@ -59,3 +59,7 @@ if __name__ == '__main__':
         )
     # Beispiel Stuttgart Umland (z_0 = 0.7), Messung 2.6 m/s in h = 7 m
     print(f'80 m Nabenhöhe: {windprofil_logarithmisch(2.6, 7, 80, 0.7):.2f} m/s')
+    # Beispiel gemessenes Windprofil, Annahme logarithmisch
+    hoehen = (10, 50, 120, 180, 220, 250, 280)
+    windgeschwindigkeiten = (3.4, 4.5, 5.7, 6.4, 6.8, 7.2, 7.5)
+    print(f'z_0 = {windprofil_logarithmisch_fit(hoehen, windgeschwindigkeiten):.2f} m')
