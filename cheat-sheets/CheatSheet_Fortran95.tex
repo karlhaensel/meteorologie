@@ -248,16 +248,16 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \begin{lstlisting}[caption={\bfseries Allocatable Arrays (Genaue Größe nicht bei Deklaration bekannt)}]
   implicit none
   ! Anzahl Dimensionen muss bekannt sein, deren Umfang aber nicht
-  real, allocatable, dimension(:,:) :: z_array
+  real, allocatable, dimension(:,:) :: za_array
   integer :: i_alloc_stat ! optional
   
   ! genaue Deklaration dann im Programm (optional mit Fehlervariable zur Abfrage hinterher)
-  allocate(z_array(<integer1>, <integer2>), stat=i_alloc_stat)
+  allocate(za_array(<integer1>, <integer2>), stat=i_alloc_stat)
   if (i_alloc_stat /= 0) write(*,*) "Fehler, Speicherplatz reicht nicht aus!"
   ! Abfrage, ob bereits Speicherplatz zugewiesen wurde
-  if (allocated(z_array)) write(*,*) "erfolgreich!"
+  if (allocated(za_array)) write(*,*) "erfolgreich!"
   ! optional: Speicherplatz freigeben
-  deallocate(z_array)
+  deallocate(za_array)
 \end{lstlisting}
 
 \section{Ein- und Ausgabe}
