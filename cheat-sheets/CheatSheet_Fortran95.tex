@@ -242,6 +242,20 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \listline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück\\
 \textbf{Arrays zuweisen (eindimensional):} \lstinline|<array>(:) = [<value1>, <value2> ...]| (alt \lstinline|(/.../)|), Zuweisung über implizites \lstinline|do| mit \lstinline|<array>(:) = [ (j, j=<integer>, <integer>) ]|\\
 \textbf{Arrays zuweisen (mehrdimensional):} Standardwert für alle Felder \lstinline|<array>(:,:,:,...) = <value>|, Nutzung der Standard-Funktion \lstinline|reshape| unter Angabe der Form, z.B. für 2 x 2 Matrix \lstinline|<array>(2,2) = reshape([<value11>, <value12>, <value21>, <value22>], [2,2])|
+\begin{lstlisting}[caption={\bfseries Allocatable Arrays (Genaue Größe nicht bei Deklaration bekannt)}]
+  implicit none
+  ! Anzahl Dimensionen muss bekannt sein, deren Umfang aber nicht
+  real, allocatable, dimension(:,:) :: z_array
+  integer :: i_alloc_stat ! optional
+  
+  ! genaue Deklaration dann im Programm (optional mit Fehlervariable zur Abfrage hinterher)
+  allocate(z_array(<integer1>, <integer2>), stat=i_alloc_stat)
+  if (i_alloc_stat /= 0) write(*,*) "Fehler, Speicherplatz reicht nicht aus!"
+  ! Abfrage, ob bereits Speicherplatz zugewiesen wurde
+  if (allocated(z_array)) write(*,*) "erfolgreich!"
+  ! optional: Speicherplatz freigeben
+  deallocate(z_array)
+\end{lstlisting}
 
 \section{Ein- und Ausgabe}
 \subsection{Grundlagen}
