@@ -242,7 +242,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
 Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
 \textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden\\
-\textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \listline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück\\
+\textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \lstinline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück\\
 \textbf{Arrays zuweisen (eindimensional):} \lstinline|<array>(:) = [<value1>, <value2> ...]| (alt \lstinline|(/.../)|), Zuweisung über implizites \lstinline|do| mit \lstinline|<array>(:) = [ (j, j=<integer>, <integer>) ]|\\
 \textbf{Arrays zuweisen (mehrdimensional):} Standardwert für alle Felder \lstinline|<array>(:,:,:,...) = <value>|, Nutzung der Standard-Funktion \lstinline|reshape| unter Angabe der Form, z.B. für 2 x 2 Matrix \lstinline|<array>(2,2) = reshape([<value11>, <value12>, <value21>, <value22>], [2,2])|
 \begin{lstlisting}[caption={\bfseries Allocatable Arrays (Genaue Größe nicht bei Deklaration bekannt)}]
@@ -297,12 +297,12 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<character>$)"|\\
 \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<character>)|\\
 \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll
-\textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstlinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinlne|<character1>| auftaucht 
+\textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinline|<character1>| auftaucht 
 
 \subsection{Parameterübergabe bei Programmaufruf}
 \textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
-\textbf{Parameter auf Variablen einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|\overset{!}{\leq}\lstinline|commandargument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|
-\textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[bash]|<programname>.x <integer1> <integer2>|
+\textbf{Parameter auf Variablen einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\overset{!}{\leq}$\lstinline|commandargument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|
+\textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[language=bash]|<programname>.x <integer1> <integer2>|
 
 \section{Unterprogramme und Module}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
