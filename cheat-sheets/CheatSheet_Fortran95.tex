@@ -258,6 +258,8 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
   if (allocated(za_array)) write(*,*) "erfolgreich!"
   ! optional: Speicherplatz freigeben
   deallocate(za_array)
+
+  ! in Unterprogrammen kann ausserdem letzte Dimension bei Deklaration mit * frei bleiben (siehe Abschnitt Unterprogramm)
 \end{lstlisting}
 
 \section{Ein- und Ausgabe}
@@ -349,6 +351,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
   return
   end subroutine <subname>
 \end{lstlisting}
+\textbf{Felddeklaration in Unterprogrammen:} letzte Dimension kann ohne explizite Größenangabe bleiben, also z.B. \lstinline|real, dimension(<integer>, *) :: za_zweidim| oder auch \lstinline|real, dimension(*) :: za_eindim|
 
 \section{Kompilieren}
 \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <progname>.x <progname>.f90| \\
