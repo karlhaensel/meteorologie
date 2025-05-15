@@ -18,6 +18,9 @@
 \setlength{\parindent}{0pt} % Kein Einruecken beim Absatz
 \setlength{\columnsep}{24pt} % Abstand zwischen den Spalten
 
+% fuer ein bisschen Mathe
+\usepackage{amsmath}
+
 % Syntax-Highlighting und Code-Umgebung
 \usepackage{xcolor}
 \usepackage{listings}
@@ -293,6 +296,11 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<character>)|\\
 \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll
 \textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstlinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinlne|<character1>| auftaucht 
+
+\subsection{Parameterübergabe bei Programmaufruf}
+\textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
+\textbf{Parameter auf Variablen einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|\overset{!}{\leq}\lstinline|commandargument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|
+\textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[bash]|<programname>.x <integer1> <integer2>|
 
 \section{Unterprogramme und Module}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
