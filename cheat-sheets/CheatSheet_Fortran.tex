@@ -24,12 +24,12 @@
 % Syntax-Highlighting und Code-Umgebung
 \usepackage{xcolor}
 \usepackage{listings}
-\lstdefinelanguage{Fortran95}{
+\lstdefinelanguage{Fortran95Konkret}{ % keine <...> Platzhalter
   basicstyle=\ttfamily\small,
   commentstyle=\color{gray},
+  morecomment=[l]{!},
   stringstyle=\color{olive},
-  moredelim=[s][\color{purple}]{<}{>},  % Platzhalter in spitzen Klammern faerben
-  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import},
+  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent}, % Standard-Argumente
@@ -42,9 +42,12 @@
   keywordstyle=[5]\color{violet},
   keywordstyle=[6]\color{green}
 }
+\lstdefinelanguage{Fortran95Abstrakt}{ % keine <...> Platzhalter
+	language=Fortran95Konkret,
+	moredelim=[s][\color{purple}]{<}{>},  % Platzhalter in spitzen Klammern faerben
+}
 \lstset{
-  language=Fortran95,
-  morecomment=[l]{!},
+  language=Fortran95Abstrakt,
   basicstyle=\ttfamily\footnotesize,
   frame=single,
   xleftmargin=-6pt,
@@ -153,7 +156,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>| \\
 \textbf{Konstanten immer komplett in Großbuchstaben benennen}
 
-\section{Verzweigungen (if-Strukturen)}
+\section{Verzweigungen/Kontrollstrukturen}
 \begin{lstlisting}[caption={\bfseries Verzweigungen mit if}]
   ! einzeilige if-Anweisung
   if (<logical>) <einzelne Anweisung>
@@ -181,6 +184,28 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
     <Anweisung(en) 4>
   endif
 \end{lstlisting}
+\begin{lstlisting}[caption={\bfseries Verzweigungen mit select case}]
+	! weit verzweigte if-else-Strukturen vermeiden:
+	select case (<integer, logical, character>) ! KEIN real
+		case (<integer, integer range, logical, character>)
+			<Anweisung(en) 1>
+		case (<integer, integer range, logical, character>)
+			<Anweisung(en) 2>
+		case default  ! wenn keiner der obigen zutrifft
+			<Anweisung(en) 3 sonst>
+	end select
+	! auch schachtelbar mit weiteren select case oder if-else-Bloecken
+	
+	! Beispiel fuer integer mit Bereichen und mehreren Optionen pro case:
+	select case (i_integer)
+		case ( 5:7  )    ...
+		case ( 8:   )    ...
+		case (  :10 )    ...
+		case (  :0, 10 ) ...		
+		case ( 12 )      ...
+	end select
+\end{lstlisting}
+\textbf{CAVE:} Fälle werden von oben nach unten geprüft, also muss speziellste Prüfung oben stehen, sonst wird darunter ggf. nicht mehr geprüft
 
 \section{Schleifen}
 \begin{lstlisting}[caption={\bfseries do-Schleifen}]
@@ -273,6 +298,36 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 
   ! in Unterprogrammen kann ausserdem letzte Dimension bei Deklaration mit * frei bleiben (siehe Abschn. Unterprogramm)
 \end{lstlisting}
+
+\begin{lstlisting}[caption={\bfseries where-Statement als Ersatz für do-if in Feldern},language=Fortran95Konkret]
+	! statt ...
+	do j=1, i_dim
+		if (z_array1(i) <= 0.0) z_array2(i) = 0.0
+	enddo
+	
+	! geht es eleganter in einer Zeile:
+	where (z_array1(:) < 0.0) z_array2(:) = 0.0
+	
+	! auch innerhalb eines arrays:
+	where (z_array(:) < 0.0) z_array(:) = 0.0
+	
+	! ...oder verschachtelt mit elsewhere:
+	where (i_array(:) < 42)
+	  i_array(:) = 0
+	elsewhere
+	  i_array(:) = 42
+	endwhere
+	
+	! ...oder mit logischer Maske:
+	where (l_logische_maske(:))
+	  y_array(:) = "hier stimmts"
+	elsewhere
+	  y_array(:) = "das jetz bloed"
+	endwhere
+	
+	! Es koennen auch mehrere where-Anweisungen verschachtelt werden
+\end{lstlisting}
+\textbf{CAVE:} Das gleichzeitige Abarbeiten zweier Arrays oder die Prüfung auf eine logische Maske sind nur möglich, wenn alle beteiligten Arrays gleichen rank und shape haben!
 
 \section{Ein- und Ausgabe}
 \subsection{Grundlagen}
