@@ -31,8 +31,8 @@
   stringstyle=\color{olive},
   morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
-  morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
-  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent}, % Standard-Argumente
+  morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
+  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position}, % Standard-Argumente
   morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, },  % Datentypen etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
@@ -84,6 +84,9 @@
 	urlcolor=teal,
 	pdftitle={Fortran Cheat Sheet}
 }
+\usepackage{cleveref}
+\crefname{section}{Abschnitt}{Abschnitte}
+\crefname{listing}{Code}{Codes}
 
 \begin{document}
 
@@ -329,28 +332,31 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{CAVE:} Das gleichzeitige Abarbeiten zweier Arrays oder die Prüfung auf eine logische Maske sind nur möglich, wenn alle beteiligten Arrays gleichen rank und shape haben!
 
 \section{Ein- und Ausgabe}
-\subsection{Grundlagen}
+\subsection{Standardeingabe und -ausgabe}
 \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <varname>|\\
 \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <Wert>|\\
-\textbf{Datei lesen/schreiben:} \lstinline|(unit=<integer>, *)|\\
-\textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|\\
-\textbf{Kombination:} möglich, aber \textbf{Einlesen von Dateien sollte in Standard-Formatierung \lstinline|*| erfolgen} (\lstinline|read(unit=<integer>, *)|), da Formatierung stark fehleranfällig beim Einlesen
+\textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|, Syntax siehe \cref{sec:formatierung}
 
-\subsection{Dateien lesen/schreiben}
-\textbf{Grundlegendes Kommando (Pflichtargumente):} \lstinline|open(unit=<integer>,file=<character>)|\\
+\subsection{Dateien öffnen/schließen}
+\textbf{Existenzprüfung:} gibt an, ob eine Datei existiert \lstinline|inquire(file=<character>, exist=<logicalname>)| \\
+\textbf{Datei öffnen (Pflichtargumente):} \lstinline|open(unit=<integer>,file=<character>)|\\
 \textbf{\lstinline|unit|:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig könnten Peripheriegeräte sein)\\
 \textbf{\lstinline|file|:} Dateiname wenn im gleichen Ordner, sonst mit Pfad\\
 \textbf{Status:} \lstinline|status=<status>| mit Möglichkeiten \lstinline|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
 \textbf{Aktion:} \lstinline|action=<action>| mit den Möglichkeiten \lstinline|"read", "write", "readwrite" (default)|\\
 \textbf{Fehlervariable:} \lstinline|iostat=<integername>|, ist \lstinline|<integername>| $\neq 0$, gab es Fehler, z.B. EOF (End of File), \textbf{immer prüfen!}\\
 \textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline|(default)| werden soll\\
-\textbf{Format:} ohne Format mit \lstinline|form="unformatted"|\\
-\textbf{Datei schließen:} \lstinline|close(unit=<integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt\\
-\textbf{Existenzprüfung:} gibt an, ob eine Datei existiert \lstinline|inquire(file=<character>, exist=<logicalname)| \\
-\textbf{Zurücksetzen:} \lstinline|rewind(unit=<integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
-\textbf{Eine Zeile zurück:} \lstinline|backspace(unit=<integer>)| setzt Position der Datei um einen record (=Zeile) zurück
+\textbf{Format:} mit Format (ASCII; Standard) oder ohne Format (Binärdatei, Angabe mit \lstinline|form="unformatted"|)\\
+\textbf{Datei schließen:} \lstinline|close(unit=<integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt
 
-\subsection{Formatierung}
+\subsection{Dateien lesen/schreiben}
+\textbf{Formatierte Datei lesen/schreiben:} \lstinline|write(unit=<integer>, *)|, bzw. \lstinline|read(unit=<integer>, *)| oder alternativ mit expliziter Format-Angabe statt \lstinline|*| (siehe \cref{sec:formatierung}), aber
+\textbf{Einlesen von Dateien sollte in Standard-Formatierung \lstinline|*| erfolgen} (\lstinline|read(unit=<integer>, *)|), da Formatierung fehleranfällig beim Einlesen\\
+\textbf{Unformatierte Datei lesen/schreiben:} jede Anweisung entspricht einem Record von variabler Byte-Größe (z.B. können auch Felder übergeben werden), Anweisungen ohne Formatangabe, nur Datei-Unit (\lstinline|write(unit=<integer>) <var>|, bzw. \lstinline|read(uni=<integer>) <var>|)\\
+\textbf{Zurücksetzen:} \lstinline|rewind(unit=<integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
+\textbf{Einen Record/Zeile zurück:} \lstinline|backspace(unit=<integer>)| setzt Position der Datei um einen record, bzw. Zeile zurück
+
+\subsection{Formatierung}\label{sec:formatierung}
 \textbf{Grundform Format-String:} \lstinline|"(<character>)"|\\
 \textbf{Mögliche Zahlenangaben:}  Datenfeldweite (muss groß genug sein, Dezimalpunkt zählt mit, unten \lstinline|w|), Anzahl Dezimalstellen (unten \lstinline|d|), Anzahl Ziffern im Exponenten (unten \lstinline|e|), Anzahl ausgegebener Ziffern (ggf. führende Nullen hinzugefügt, unten \lstinline|m|)\\
 \textbf{\lstinline|integer|:} \lstinline|Iw[.m]|\\
@@ -367,7 +373,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 
 \subsection{Parameterübergabe bei Programmaufruf}
 \textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
-\textbf{Parameter einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\leq$\lstinline|commandargument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|\\
+\textbf{Parameter einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\leq$\lstinline|command_argument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|\\
 \textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[language=bash]|<programname>.x <integer1> <integer2>|
 
 \section{Unterprogramme und Module}
