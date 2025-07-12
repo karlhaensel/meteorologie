@@ -32,7 +32,7 @@
   morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
-  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, NML}, % Standard-Argumente
+  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
   morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist},  % Datentypen etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
@@ -348,6 +348,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Fehlervariable:} \lstinline|iostat=<integername>|, ist \lstinline|<integername>| $\neq 0$, gab es Fehler, z.B. EOF (End of File), \textbf{immer prüfen!}\\
 \textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline|(default)| werden soll\\
 \textbf{Format:} mit Format (ASCII; Standard) oder ohne Format (Binärdatei, Angabe mit \lstinline|form="unformatted"|)\\
+\textbf{Direktzugriff:} spezielle Datensätze wie Datenbanken, bei denen alle Records gleich lang sind (record byte length \lstinline|recl| für alle gleich), können über Direktzugriff angesprochen werden (kein sukzessives Einlesen/Schreiben nötig, sondern direkter Zugriff auf Record-Nummer mit \lstinline|write(<unit>, rec=<integer>), bzw. read(<unit>, rec=<integer>)|) mit den Argumenten \lstinline|access="direct", recl=<integer>, form="unformatted"|\\
 \textbf{Datei schließen:} \lstinline|close(unit=<integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt
 
 \subsection{Dateien lesen/schreiben}
@@ -369,8 +370,9 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Zeilensprung:} \lstinline|/|\\
 \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<character>$)"|\\
 \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<character>)|\\
-\textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll
-\textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinline|<character1>| auftaucht 
+\textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll\\
+\textbf{Schreiben auf, bzw. Umwandeln von Variablen:} insbesondere kann Text in Zahlen (und umgekehrt) umgewandelt werden, indem \lstinline|write| und \lstinline|read| auf Variablen angewendet werden, z.B. \lstinline|read(y_datum, "(2I, '.', 2I, '.', 4I)" i_tag, i_monat, i_jahr|\\
+\textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinline|<character1>| auftaucht
 
 \subsection{Parameterübergabe bei Programmaufruf}
 \textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
@@ -381,7 +383,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Variablen-Deklaration im Programm:} erfolgt wie gewohnt, durch namelist einzulesende Werte werden bereits im Deklarationsteil mit Standard-Wert belegt\\
 \textbf{Namelist:} enthält nur Angaben zu den Variablen, die von Standard-Belegung abweichen sollen (kann also auch leer sein und es können für unterschiedliche Fälle unterschiedliche Namelists vorliegen)\\
 \textbf{Namelist-Deklaration:} unter den Deklarationen der zugehörigen Variablen mit \lstinline|namelist /<namelistname>/ <var1>, <var2>, ...|\\
-\textbf{Öffnen und Lesen der Namelist:} Öffnen wie alle Dateien (siehe \cref{sec:dateien-oeffnen}), Einlesen der enthaltenen Variablen durch \lstinline|read(<unitinteger>,NML=<namelistname>)|
+\textbf{Öffnen und Lesen der Namelist:} Öffnen wie alle Dateien (siehe \cref{sec:dateien-oeffnen}), Einlesen der enthaltenen Variablen durch \lstinline|read(<unitinteger>,nml=<namelistname>)|
 \begin{lstlisting}[caption={Struktur Namelist-Datei <namelistname>.nml}]
 	&<namelistname>
 	<var1> = <value1>
