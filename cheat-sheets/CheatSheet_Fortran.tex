@@ -32,8 +32,8 @@
   morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
-  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position}, % Standard-Argumente
-  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, },  % Datentypen etc
+  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, NML}, % Standard-Argumente
+  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist},  % Datentypen etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
   keywordstyle=[2]\color{cyan},
@@ -335,9 +335,10 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \subsection{Standardeingabe und -ausgabe}
 \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <varname>|\\
 \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <Wert>|\\
-\textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|, Syntax siehe \cref{sec:formatierung}
+\textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|, Syntax siehe \cref{sec:formatierung}\\
+\textbf{Umleitung von input und output beim Programmaufruf:} alles, was über die Standard-Ausgabe (erster \lstinline|*|) eingelesenen oder geschrieben wird, kann auch aus einer Datei eingelesen oder in eine Datei geschrieben werden, indem beim Aufruf in das Programm umgeleitet wird (\lstinline[style=neutral]|program.x < inputfile|), bzw. aus dem Programm umgeleitet wird (\lstinline[style=neutral]|program.x > outputfile|) werden (oder beides kombiniert: \lstinline[style=neutral]|program.x < inputfile > outputfile|)
 
-\subsection{Dateien öffnen/schließen}
+\subsection{Dateien öffnen/schließen}\label{sec:dateien-oeffnen}
 \textbf{Existenzprüfung:} gibt an, ob eine Datei existiert \lstinline|inquire(file=<character>, exist=<logicalname>)| \\
 \textbf{Datei öffnen (Pflichtargumente):} \lstinline|open(unit=<integer>,file=<character>)|\\
 \textbf{\lstinline|unit|:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig könnten Peripheriegeräte sein)\\
@@ -375,6 +376,19 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
 \textbf{Parameter einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\leq$\lstinline|command_argument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|\\
 \textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[language=bash]|<programname>.x <integer1> <integer2>|
+
+\subsection{Variablenübergabe durch Namelists}
+\textbf{Variablen-Deklaration im Programm:} erfolgt wie gewohnt, durch namelist einzulesende Werte werden bereits im Deklarationsteil mit Standard-Wert belegt\\
+\textbf{Namelist:} enthält nur Angaben zu den Variablen, die von Standard-Belegung abweichen sollen (kann also auch leer sein und es können für unterschiedliche Fälle unterschiedliche Namelists vorliegen)\\
+\textbf{Namelist-Deklaration:} unter den Deklarationen der zugehörigen Variablen mit \lstinline|namelist /<namelistname>/ <var1>, <var2>, ...|\\
+\textbf{Öffnen und Lesen der Namelist:} Öffnen wie alle Dateien (siehe \cref{sec:dateien-oeffnen}), Einlesen der enthaltenen Variablen durch \lstinline|read(<unitinteger>,NML=<namelistname>)|
+\begin{lstlisting}[caption={Struktur Namelist-Datei <namelistname>.nml}]
+	&<namelistname>
+	<var1> = <value1>
+	<var2> = <value2>
+	...
+	/
+\end{lstlisting}
 
 \section{Unterprogramme und Module}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
