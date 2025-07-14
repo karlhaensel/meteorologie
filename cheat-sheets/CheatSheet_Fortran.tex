@@ -29,7 +29,7 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall},
+  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
@@ -121,6 +121,11 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
 \textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen nicht
 
+\section{Konstanten}
+\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
+\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>| \\
+\textbf{Konstanten immer komplett in Großbuchstaben benennen}
+
 \section{Zahlen}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8; für Details \href{http://earth.uni-muenster.de/~joergs/doc/f90/unix-um/dfum_034.html}{siehe hier})\\
 \textbf{CAVE:} \lstinline|<integer>| \lstinline|= 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
@@ -153,10 +158,50 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character>| \lstinline|= trim(<character>)| \\
 \textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format \lstinline|write(<charactervar>, <format>) <numerical1>, <character>, <numerical2>|
 
-\section{Konstanten}
-\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
-\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>| \\
-\textbf{Konstanten immer komplett in Großbuchstaben benennen}
+\section{Datenverbund (Derived Type)}
+\textbf{Möglichkeit, um eigene strukturierte Datentypen zu definieren und zu nutzen (z.B. Datenbanknutzung)}\\
+\textbf{Abstrakte Deklaration Datentyp:} erfolgt durch \lstinline|type :: <typename> ... end type <typename>|, dazwischen steht pro Zeile eine Deklarationspaar \lstinline|<type> :: <typevarname>|, dort können auch weitere vorher definierte eigene Datentypen verwendet werden\\
+\textbf{Konkrete Deklaration Variablen des Datenverbunds:} erfolgt darunter mit \lstinline|type(<typename>) :: <varname>|\\
+\textbf{Ansteuern einzelner Untervariablen:} mittels \lstinline|%|, z.B. \lstinline|person%y_name = "Max Musterfrau"| oder Argumentenliste in Deklarationsreihenfolge \lstinline|<typevarname> = (<var1>, <var2>, <var3>...)|\\
+\textbf{Einlesen:} sind pro Zeile (oder Eingabe) genau die angegebenen Untervariablen enthalten, reicht zum einlesen \lstinline|read(<unit number>, *) <typevarname>|\\
+\textbf{Überladen von Operatoren:} Operatoren (wie z.B. \lstinline|-, +, ...|) können für den Datentyp neu definiert werden, indem eine Funktion geschrieben wird, die das gewünschte Ergebnis liefert und dann ein interface definiert wird, das den Operator "überlädt", z.B.: \lstinline|interface operator (-) \n procedure my_diff_function end interface operator (-)|, zum Beispiel:
+\begin{lstlisting}[caption={Nutzung eigener Datentypen inklusive Überladung}]
+	module punkt2D
+	
+	type :: p2
+	  real :: z_x
+	  real :: z_y
+	end type
+	
+	interface operator (-)
+	  procedure diff
+	end interface operator (-)
+	
+	contains
+	
+	function diff(pa, pb)
+	  type(p2), intent(in) :: pa, pb
+	  type(p2)             :: diff
+	  
+	  diff%z_x = pa%z_x - pb%z_x
+	  diff%z_y = pa%z_y - pb%z_y
+	end function diff
+	end module
+	
+	program punkttest
+	use punkt2D
+	
+	implicit none
+	type(p2) :: punkt_a, punkt_b, punkt_diff
+	
+	punkt_a = p2( 2, 3)
+	punkt_b = p2(20,30)
+	
+	punkt_diff = punkt_a - punkt_b
+	
+	end program punkttest
+\end{lstlisting}
+
 
 \section{Verzweigungen/Kontrollstrukturen}
 \begin{lstlisting}[caption={\bfseries Verzweigungen mit if}]
