@@ -29,7 +29,7 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere},
+  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
@@ -330,6 +330,17 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 	! Es koennen auch mehrere where-Anweisungen verschachtelt werden
 \end{lstlisting}
 \textbf{CAVE:} Das gleichzeitige Abarbeiten zweier Arrays oder die Prüfung auf eine logische Maske sind nur möglich, wenn alle beteiligten Arrays gleichen rank und shape haben!
+\begin{lstlisting}[caption={forall-Statement als Parallelisierung von where}]
+	! forall beinhaltet Wertebereich (ggf. Schrittweite) einer Laufvariable und ggf. eine logische Maske, die anzuwenden ist, z.B.:
+	forall(j=<integer1>:<integer2>, <logical expression>) za_array(j) = <real>
+	
+	! es koennen aber auch mehrere Bereiche genutz werden, z.B. fuer Transposition einer Matrix:
+	forall(ja=1:I_N, jb=1:I_N)
+	  i_matrix(ja, jb) ) = i_matrix(jb, ja)
+	end forall
+	! funktioniert korrekt, da Augabe parallelisiert wird, d.h. es benoetigt keinen Zwischenspeicher fuer Aenderungen
+	
+\end{lstlisting}
 
 \section{Ein- und Ausgabe}
 \subsection{Standardeingabe und -ausgabe}
