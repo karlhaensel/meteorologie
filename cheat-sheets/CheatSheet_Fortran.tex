@@ -29,11 +29,11 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={kind, module, use, allocate, deallocate, contains, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
+  morekeywords={kind, module, use, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
-  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist},  % Datentypen etc
+  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist, contains, allocatable, optional},  % Datentypen, Deklaration etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
   keywordstyle=[2]\color{cyan},
@@ -158,7 +158,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character>| \lstinline|= trim(<character>)| \\
 \textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format \lstinline|write(<charactervar>, <format>) <numerical1>, <character>, <numerical2>|
 
-\section{Datenverbund (Derived Type)}
+\section{Datenverbund (Derived Type)}\label{sec:datenverbund}
 \textbf{Möglichkeit, um eigene strukturierte Datentypen zu definieren und zu nutzen (z.B. Datenbanknutzung)}\\
 \textbf{Abstrakte Deklaration Datentyp:} erfolgt durch \lstinline|type :: <typename> ... end type <typename>|, dazwischen steht pro Zeile eine Deklarationspaar \lstinline|<type> :: <typevarname>|, dort können auch weitere vorher definierte eigene Datentypen verwendet werden\\
 \textbf{Konkrete Deklaration Variablen des Datenverbunds:} erfolgt darunter mit \lstinline|type(<typename>) :: <varname>|\\
@@ -451,24 +451,46 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \section{Unterprogramme und Module}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
 \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutine>(<Argument(e)>)|\\
-\textbf{Funktionen:} \lstinline|function| gibt einen Wert zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
+\textbf{Funktionen:} \lstinline|<type> function| gibt einen Wert der Art \lstinline|<type>| zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
+\textbf{Rekursive Funktionen:} entweder über Definitionskopf \lstinline|recursive function <funcname>(<Arugement(e)>) result(<resultvarname>)| und dann mit \lstinline|<resultvartype> :: <resultvarname>| im Deklarationsteil oder mit \lstinline|<resulttype> recursive function <funcname>(<Arugment(e)>) result(<resultvarname>)| ohne explizite Deklaration später; innerhalb der Funktionsdefinition wird dann irgendwo die Funktion selbst wieder aufgerufen (an Abbruchkriterien denken!)\\
 \textbf{Deklarationen in Unterprogrammen:}  angeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), unabhängig vom Originalwert hinterher zurückgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
 \textbf{CAVE:} \textbf{Anzahl und Reihenfolge der Argumente} müssen zwischen Deklaration und Aufruf übereinstimmen!\\
 \textbf{Variable Längendeklaration:} ist z.B. String-Länge  eines einzugebenden Arguments in Unterprogramm nicht bekannt, kann sie mit \lstinline|character(len=*) :: <Argument>| deklariert werden\\
-\textbf{Modul:} enthält nicht ausführbaren  Programminhalt (Deklarationen, Wertzuweisungen, ...), der von allen Programmteilen genutzt wird, bei Einzelkompilierung  Mdul zuerst kompilieren\\
-\textbf{Einbindung Modul in (Unter-)Programme:} \lstinline|use <modulename>|\\
-\textbf{CAVE:} alle Unterprogramme haben auf den \textbf{aktuellen Zustand einer Modul-Variable} im Programmverlauf Zugriff (auch wenn gemeinsames Modul eigentlich initialisiert)\\
-\textbf{Lokale Variablen:} wird eine Variable nicht über ein Modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)
-\begin{lstlisting}[caption={\bfseries Dateischema Modul, Haupt- und Unterprogramme }]
-  module <modulename>
+\textbf{Felddeklaration in Unterprogrammen:} letzte Dimension kann ohne explizite Größenangabe bleiben, also z.B. \lstinline|real, dimension(<integer>, *) :: za_zweidim| oder auch \lstinline|real, dimension(*) :: za_eindim|\\
+\textbf{CAVE: sinnvolle Fehlerausgaben bei falscher Datentyp-Übergabe hängen vom Compiler ab}, soll eine Warnung sichergestellt werden, müssen Unterprogramme in Modulen oder über ein Interface (s.u.) definiert werden\\
+\textbf{Modul:} enthält Programminhalt (Deklarationen, Wertzuweisungen, aber auch subroutines, functions oder interfaces), der von allen Programmteilen oder mehreren Programmen genutzt wird\\
+\textbf{Einbindung Modul in (Unter-)Programme:} \lstinline|use <modulename>|, bei Einzelkompilierung Modul zuerst kompilieren\\
+\textbf{CAVE:} alle Unterprogramme haben auf den \textbf{aktuellen Zustand einer Modul-Variable} im Programmverlauf Zugriff (auch wenn gemeinsames Modul eigentlich nur initialisiert)\\
+\textbf{Lokale Variablen:} wird eine Variable nicht über ein Modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)\\
+\textbf{Interfaces:} \lstinline|interface| kann helfen, Fehlermeldung bei falscher Datentypübergabe an Unterprogramme zu forcieren, in Unterprogrammen optionale Argumente und Allokation zu ermöglichen oder Operatoren bei selbst definierten Datentypen zu überladen (siehe \cref{sec:datenverbund})\\
+\textbf{Deklaration von Interfaces:} kann im Hauptprogramm stehen oder in (alleinstehendes!) Modul (getrennt von Deklaration von Konstanten oder Initialisierung von Variablen für Haupt- und Unterprogramme) ausgelagert werden, enthalten nur Informationen, die für Unterprogrammnutzung erforderlich sind (Unterprogrammname, Parameterdeklarationen)\\
+\textbf{Optionale Parameter und Allokieren für Unterprogramme durch Interfaces:} über \lstinline|optional|, bzw. \lstinline|allocatable| in der Deklaration (siehe \cref{code:structure}), es gilt beim Aufruf dennoch Reihenfolge der Argumente, demzufolge müssen ggf. Argumente explizit angegeben werden (also \lstinline|<subname>(<argname>=<argvalue>)|)\\
+\begin{lstlisting}[caption={\bfseries Dateischema Modul, Haupt- und Unterprogramme },label=code:structure]
+  module <modulename1>
   ! erklaerender Kommentar
   implicit none
   <globale Deklarationen, Definitionen, Initialisierungen>
+  
+  contains
+  <globale Prozeduren, Funktionen, Interfaces, falls nicht anderswo definiert>
+  end module <modulename>
+  
+  module <modulename2>
+  ! erklaerender Kommentar
+  interface
+    subroutine <suname>(<Argument(e))
+      <type>, intent(<intent>) :: <argname>
+      <type>, allocatable, dimension(:,:,...) :: <allocargname>
+      <type>, intent(<intent>), optional :: <optargname>
+      ...
+    end subroutine <subname>
+  end interface
   end module <modulename>
   
   program <progname>
   ! erklaerender Kommentar
-  use <modulename>
+  use <modulename1>
+  use <modulename2>
   implicit none
   <lokale Deklarationen (auch zu nutzende Funktionen), Definitionen, Initialisierungen>
   <Anweisungsteil>
@@ -477,7 +499,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
   
   <type> function <funcname>(<Arugment(e)>)
   ! erklaerender Kommentar
-  use <modulename>
+  use <modulename1>
   implicit none
   <type>, intent(<intent>) :: <argname>
   <weitere lokale Deklarationen, Definitionen, Initialisierungen>
@@ -487,15 +509,16 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
   
   subroutine <subname>(<Arguemt(e)>)
   ! erklaerender Kommentar
-  use <modulename>
+  use <modulename1>
   implicit none
   <type>, intent(<intent>) :: <argname>
+  <type>, allocatable, dimension(:,:,...) :: <allocargname>
+  <type>, intent(<intent>), optional :: <optargname>
   <weitere lokale Deklarationen, Definitionen, Initialisierungen>
   <Anweisungen>
   return
   end subroutine <subname>
 \end{lstlisting}
-\textbf{Felddeklaration in Unterprogrammen:} letzte Dimension kann ohne explizite Größenangabe bleiben, also z.B. \lstinline|real, dimension(<integer>, *) :: za_zweidim| oder auch \lstinline|real, dimension(*) :: za_eindim|
 
 \section{Kompilieren}
 \textbf{Einfach:} \lstinline[style=neutral]|gfortran -o <progname>.x <progname>.f90| \\
