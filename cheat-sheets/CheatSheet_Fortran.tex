@@ -148,8 +148,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \end{lstlisting}
 \textbf{Strings ändern/Teilabfrage:} Strings können auch indiziert werden, z.B. \lstinline|<character>(2:4)  = "neu"|\\
 \textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integercount>)|, \lstinline|<integercount>| $\geq 0$\\
-\textbf{Leerzeichen String-Ende entfernen:} \lstinline|trim(<character>)| \\
-\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format (siehe \cref{sec:formatierung})
+\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format (dafür und für weitere Formatierungsoptionen für Strings siehe \cref{sec:formatierung})
 
 \section{Datenverbund (Derived Type)}\label{sec:datenverbund}
 \textbf{Ziel:} eigene strukturierte Datentypen definieren und nutzen, die aus mehreren Untervariablen zusammengesetzt sind (auch vorher bereits definierte andere eigene Datenverbünde möglich)\\
@@ -351,56 +350,56 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \section{Ein- und Ausgabe}
 \subsection{Standardeingabe und -ausgabe}
 \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <varname>|\\
-\textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden\\
-\textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <Wert>|\\
+\textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. also \lstinline|'/'| nutzen\\
+\textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*)| \lstinline|<Wert>|\\
 \textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|, Syntax siehe \cref{sec:formatierung}\\
-\textbf{Umleitung von input und output beim Programmaufruf:} alles, was über die Standard-Ausgabe (erster \lstinline|*|) eingelesenen oder geschrieben wird, kann auch aus einer Datei eingelesen oder in eine Datei geschrieben werden, indem beim Aufruf in das Programm umgeleitet wird (\lstinline[style=neutral]|program.x < inputfile|), bzw. aus dem Programm umgeleitet wird (\lstinline[style=neutral]|program.x > outputfile|) werden (oder beides kombiniert: \lstinline[style=neutral]|program.x < inputfile > outputfile|)
+\textbf{Umleitung von input und output beim Programmaufruf:} alles, was über die Standard-Ausgabe (erster \lstinline|*|) eingelesenen oder geschrieben wird, kann auch aus einer Datei eingelesen oder in eine Datei geschrieben werden, indem beim Aufruf in das Programm umgeleitet wird (\lstinline[style=neutral]|program.x < inputfile|), bzw. aus dem Programm umgeleitet wird (\lstinline[style=neutral]|program.x > outputfile|) (oder beides kombiniert: \lstinline[style=neutral]|program.x < inputfile > outputfile|)
 
 \subsection{Dateien öffnen/schließen}\label{sec:dateien-oeffnen}
 \textbf{Existenzprüfung:} gibt an, ob eine Datei existiert \lstinline|inquire(file=<character>, exist=<logicalname>)| \\
 \textbf{Datei öffnen (Pflichtargumente):} \lstinline|open(unit=<integer>,file=<character>)|\\
 \textbf{\lstinline|unit|:} nicht-negativer, zweistelliger \lstinline|integer| (einstellig könnten Peripheriegeräte sein)\\
 \textbf{\lstinline|file|:} Dateiname wenn im gleichen Ordner, sonst mit Pfad\\
-\textbf{Status:} \lstinline|status=<status>| mit Möglichkeiten \lstinline|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
-\textbf{Aktion:} \lstinline|action=<action>| mit den Möglichkeiten \lstinline|"read", "write", "readwrite" (default)|\\
+\textbf{Status:} \lstinline|status=<status>| mit Möglichkeiten \lstinline[style=neutral]|"old", "new", "unknwon" (default), "replace", "scratch"| (scratch: nur temporär während Programmlauf existent)\\
+\textbf{Aktion:} \lstinline|action=<action>| mit den Möglichkeiten \lstinline[style=neutral]|"read", "write", "readwrite" (default)|\\
 \textbf{Fehlervariable:} \lstinline|iostat=<integername>|, ist \lstinline|<integername>| $\neq 0$, gab es Fehler, z.B. EOF (End of File), \textbf{immer prüfen!}\\
-\textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline|(default)| werden soll\\
+\textbf{Position:} \lstinline|position="append"|, wenn am Ende angefügt statt von Anfang überschrieben \lstinline[style=neutral]|(default)| werden soll\\
 \textbf{Format:} mit Format (ASCII; Standard) oder ohne Format (Binärdatei, Angabe mit \lstinline|form="unformatted"|)\\
 \textbf{Direktzugriff:} spezielle Datensätze wie Datenbanken, bei denen alle Records gleich lang sind (record byte length \lstinline|recl| für alle gleich), können über Direktzugriff angesprochen werden (kein sukzessives Einlesen/Schreiben nötig, sondern direkter Zugriff auf Record-Nummer mit \lstinline|write(<unit>, rec=<integer>), bzw. read(<unit>, rec=<integer>)|) mit den Argumenten \lstinline|access="direct", recl=<integer>, form="unformatted"|\\
 \textbf{Datei schließen:} \lstinline|close(unit=<integer>)|, eigentlich automatisch am Programmende, insbesondere bei großen Datenmengen aber sinnvoll, sobald nicht mehr benötigt
 
 \subsection{Dateien lesen/schreiben}
-\textbf{Formatierte Datei lesen/schreiben:} \lstinline|write(unit=<integer>, *)|, bzw. \lstinline|read(unit=<integer>, *)| oder alternativ mit expliziter Format-Angabe statt \lstinline|*| (siehe \cref{sec:formatierung}), aber
-\textbf{Einlesen von Dateien sollte in Standard-Formatierung \lstinline|*| erfolgen} (\lstinline|read(unit=<integer>, *)|), da Formatierung fehleranfällig beim Einlesen\\
-\textbf{Unformatierte Datei lesen/schreiben:} jede Anweisung entspricht einem Record von variabler Byte-Größe (z.B. können auch Felder übergeben werden), Anweisungen ohne Formatangabe, nur Datei-Unit (\lstinline|write(unit=<integer>) <var>|, bzw. \lstinline|read(uni=<integer>) <var>|)\\
+\textbf{Formatierte Datei lesen/schreiben:} \lstinline|write(unit=<integer>, *)|, bzw. \lstinline|read(unit=<integer>, *)| oder alternativ mit expliziter Format-Angabe statt \lstinline|*| (siehe \cref{sec:formatierung}), aber...\\
+\textbf{Einlesen von Dateien sollte immer in Standard-Formatierung \lstinline|*| erfolgen} (\lstinline|read(unit=<integer>, *)|), da Formatierung fehleranfällig beim Einlesen\\
+\textbf{Unformatierte Datei lesen/schreiben:} jede Anweisung entspricht einem Record von variabler Byte-Größe (z.B. können auch Felder übergeben werden), Anweisungen ohne Formatangabe, nur Datei-Unit (\lstinline|write(unit=<integer>)| \lstinline|<var>|, bzw. \lstinline|read(uni=<integer>)| \lstinline|<var>|)\\
 \textbf{Zurücksetzen:} \lstinline|rewind(unit=<integer>)| setzt die Position der Datei wieder auf Anfang zum erneuten Lesen/Schreiben\\
 \textbf{Einen Record/Zeile zurück:} \lstinline|backspace(unit=<integer>)| setzt Position der Datei um einen record, bzw. Zeile zurück
 
 \subsection{Formatierung}\label{sec:formatierung}
 \textbf{Grundform Format-String:} \lstinline|"(<character>)"|\\
-\textbf{Mögliche Zahlenangaben:}  Datenfeldweite (muss groß genug sein, Dezimalpunkt zählt mit, unten \lstinline|w|), Anzahl Dezimalstellen (unten \lstinline|d|), Anzahl Ziffern im Exponenten (unten \lstinline|e|), Anzahl ausgegebener Ziffern (ggf. führende Nullen hinzugefügt, unten \lstinline|m|)\\
+\textbf{Mögliche Zahlenangaben:}  Datenfeldweite \lstinline|w| (muss groß genug sein, Dezimalpunkt zählt mit), Anzahl Dezimalstellen \lstinline|d|, Anzahl Ziffern im Exponenten \lstinline|e|, Anzahl ausgegebener Ziffern \lstinline|m| (ggf. führende Nullen hinzugefügt)\\
 \textbf{\lstinline|integer|:} \lstinline|Iw[.m]|\\
 \textbf{\lstinline|real|:} Fixpunktdarstellung: \lstinline|Fw.d| (wobei \lstinline|w|$\geq$\lstinline|d|$+2$), Exponentialdarstellung: \lstinline|Ew.d| (wobei \lstinline|w|$\geq$\lstinline|d|$+7$), Exponentialdarstellung mit fester Exponentenlänge: \lstinline|Ew.dEe| (wobei \lstinline|w|$\geq$\lstinline|d|$+$\lstinline|e|$+5$), Exponentialdarstellung mit fester Stellenzahl \lstinline|n| vor dem Komma: \lstinline|nPEw.d|, automatische Wahl von \lstinline|F| oder \lstinline|E| Format: \lstinline|Gw.d|\\
 \textbf{\lstinline|character|:} \lstinline|A[w]|\\
 \textbf{\lstinline|logical|:} \lstinline|Lw|\\
-\textbf{Positionierung in \lstinline|n|ter Spalte (Tabulator):} \lstinline|Tn|\\
+\textbf{Positionierung in \lstinline|n|-ter Spalte (Tabulator):} \lstinline|Tn|\\
 \textbf{Ausgabe von \lstinline|n| Leerstellen:} \lstinline|nX|\\
 \textbf{Zeilensprung:} \lstinline|/|\\
 \textbf{Zeilenvorschub unterdrücken:} \lstinline|"(<character>$)"|\\
 \textbf{\lstinline|n|-fach wiederholen:} \lstinline|n(<character>)|\\
 \textbf{Auslagerung in Variable:} sinnvoll, wenn mehrfach verwendet oder  zwischendurch verändert werden soll\\
-\textbf{Schreiben auf, bzw. Umwandeln von Variablen:} insbesondere kann Text in Zahlen (und umgekehrt) umgewandelt werden, indem \lstinline|write| und \lstinline|read| auf Variablen angewendet werden, z.B. \lstinline|read(y_datum, "(2I, '.', 2I, '.', 4I)" i_tag, i_monat, i_jahr|\\
-\textbf{Standard-Funktionen für Text-Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinline|<character1>| auftaucht
+\textbf{Schreiben auf, bzw. Umwandeln von Variablen:} insbesondere kann Text in Zahlen (und umgekehrt) umgewandelt werden, indem \lstinline|write| und \lstinline|read| auf Variablen angewendet werden, z.B. \lstinline|write(y_datum, "(2I, '.', 2I, '.', 4I)" i_tag, i_monat, i_jahr|\\
+\textbf{Standard-Funktionen Formatierung:} \lstinline|trim(<character>)| entfernt Leerzeichen am Ende, \lstinline|adjustl(<character>), adjustr(<character>)| richten Text links-, bzw. rechtsbündig aus, \lstinline|len(<character>), len_trim(<character>)| geben Länge zurück (ggf. ohne Leerzeichen am Ende), \lstinline|index(<character1>, <character2>)| gibt Position zurück, an der Muster \lstinline|<character2>| in \lstinline|<character1>| auftaucht
 
 \subsection{Parameterübergabe bei Programmaufruf}
-\textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer> = command_argument_count()|\\
-\textbf{Parameter einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\leq$\lstinline|command_argument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*) <numericalvariable>|\\
+\textbf{Anzahl der übergebenen Kommandozeilenparameter abfragen:} \lstinline|<integer>| \lstinline|= command_argument_count()|\\
+\textbf{Parameter einlesen:} \lstinline|call get_command_argument(<integer>, <charactervariable>)| (dabei \lstinline|<integer>|$\leq$\lstinline|command_argument_count()|), immer als \lstinline|character| eingelesen, Umwandlung z.B. über \lstinline|read(<charactervariable>,*)| \lstinline|<numericalvariable>|\\
 \textbf{Programmaufruf:} z.B. für zwei \lstinline|integer|-Argumente \lstinline[language=bash]|<programname>.x <integer1> <integer2>|
 
 \subsection{Variablenübergabe durch Namelists}
-\textbf{Variablen-Deklaration im Programm:} erfolgt wie gewohnt, durch namelist einzulesende Werte werden bereits im Deklarationsteil mit Standard-Wert belegt\\
+\textbf{Variablen-Deklaration im Programm:} erfolgt wie gewohnt, durch namelist einzulesende Werte werden bereits im Deklarationsteil jeweils mit Standard-Wert belegt\\
 \textbf{Namelist:} enthält nur Angaben zu den Variablen, die von Standard-Belegung abweichen sollen (kann also auch leer sein und es können für unterschiedliche Fälle unterschiedliche Namelists vorliegen)\\
-\textbf{Namelist-Deklaration:} unter den Deklarationen der zugehörigen Variablen mit \lstinline|namelist /<namelistname>/ <var1>, <var2>, ...|\\
+\textbf{Deklaration:} unter der Deklarationen der zugehörigen Variablen mit \lstinline|namelist /<namelistname>/ <var1>, <var2>, ...|\\
 \textbf{Öffnen und Lesen der Namelist:} Öffnen wie alle Dateien (siehe \cref{sec:dateien-oeffnen}), Einlesen der enthaltenen Variablen durch \lstinline|read(<unitinteger>,nml=<namelistname>)|
 \begin{lstlisting}[caption={Struktur Namelist-Datei <namelistname>.nml}]
 	&<namelistname>
