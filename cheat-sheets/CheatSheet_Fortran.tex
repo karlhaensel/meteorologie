@@ -29,7 +29,7 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={module, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
+  morekeywords={module, allocate, deallocate, subroutine, function, recursive, result, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access, kind}, % Standard-Argumente
@@ -409,75 +409,71 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 	/
 \end{lstlisting}
 
-\section{Unterprogramme und Module}\label{sec:unterprogramme}
+\section{Unterprogramme (s. \cref{code:structure})}\label{sec:unterprogramme}
+\subsection{Subroutinen und Funktionen}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
 \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutine>(<Argument(e)>)|\\
-\textbf{Funktionen:} \lstinline|<type> function| gibt einen Wert der Art \lstinline|<type>| zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
-\textbf{Rekursive Funktionen:} entweder über Definitionskopf \lstinline|recursive function <funcname>(<Arugement(e)>) result(<resultvarname>)| und dann mit \lstinline|<resultvartype> :: <resultvarname>| im Deklarationsteil oder mit \lstinline|<resulttype> recursive function <funcname>(<Arugment(e)>) result(<resultvarname>)| ohne explizite Deklaration später; innerhalb der Funktionsdefinition wird dann irgendwo die Funktion selbst wieder aufgerufen (an Abbruchkriterien denken!)\\
+\textbf{Funktionen:} \lstinline|<type>| \lstinline|function| gibt einen Wert der Art \lstinline|<type>| zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
+\textbf{Rekursive Funktionen:} entweder über Definitionskopf \lstinline|recursive function <funcname>(<Arugement(e)>)| \lstinline|result(<resultvarname>)| und dann mit \lstinline|<resultvartype> :: <resultvarname>| im Deklarationsteil der Funktion; alternativ mit \lstinline|<resulttype>| \lstinline|recursive function <funcname>(<Arugment(e)>)| \lstinline|result(<resultvarname>)| ohne explizite Deklaration später; in beiden Fällen wird innerhalb der Funktionsdefinition dann die Funktion selbst wieder aufgerufen (an Abbruchkriterien denken!)\\
 \textbf{Deklarationen in Unterprogrammen:}  angeben, ob ein Argument nur eingelesen und nicht verändert (\lstinline|intent(in)|), unabhängig vom Originalwert hinterher zurückgegeben (\lstinline|intent(out)|) oder gelesen UND verändert werden soll (\lstinline|intent(inout)|)\\
 \textbf{CAVE:} \textbf{Anzahl und Reihenfolge der Argumente} müssen zwischen Deklaration und Aufruf übereinstimmen!\\
 \textbf{Variable Längendeklaration:} ist z.B. String-Länge  eines einzugebenden Arguments in Unterprogramm nicht bekannt, kann sie mit \lstinline|character(len=*) :: <Argument>| deklariert werden\\
 \textbf{Felddeklaration in Unterprogrammen:} letzte Dimension kann ohne explizite Größenangabe bleiben, also z.B. \lstinline|real, dimension(<integer>, *) :: za_zweidim| oder auch \lstinline|real, dimension(*) :: za_eindim|\\
-\textbf{CAVE: sinnvolle Fehlerausgaben bei falscher Datentyp-Übergabe hängen vom Compiler ab}, soll eine Warnung sichergestellt werden, müssen Unterprogramme in Modulen oder über ein Interface (s.u.) definiert werden\\
+\textbf{CAVE: sinnvolle Fehlerausgaben bei falscher Datentyp-Übergabe hängen vom Compiler ab}, soll eine Warnung sichergestellt werden, müssen Unterprogramme in Modulen oder über ein Interface (s.u.) definiert werden
+\subsection{Module und Interfaces}
 \textbf{Modul:} enthält Programminhalt (Deklarationen, Wertzuweisungen, aber auch subroutines, functions oder interfaces), der von allen Programmteilen oder mehreren Programmen genutzt wird\\
 \textbf{Einbindung Modul in (Unter-)Programme:} \lstinline|use <modulename>|, bei Einzelkompilierung Modul zuerst kompilieren\\
 \textbf{CAVE:} alle Unterprogramme haben auf den \textbf{aktuellen Zustand einer Modul-Variable} im Programmverlauf Zugriff (auch wenn gemeinsames Modul eigentlich nur initialisiert)\\
 \textbf{Lokale Variablen:} wird eine Variable nicht über ein Modul \glqq verbreitet\grqq, gilt sie immer nur lokal in der jeweiligen Programmeinheit (Programm, Subroutine, Funktion)\\
-\textbf{Interfaces:} \lstinline|interface| kann helfen, Fehlermeldung bei falscher Datentypübergabe an Unterprogramme zu forcieren, in Unterprogrammen optionale Argumente und Allokation zu ermöglichen oder Operatoren bei selbst definierten Datentypen zu überladen (siehe \cref{sec:datenverbund})\\
-\textbf{Deklaration von Interfaces:} kann im Hauptprogramm stehen oder in (alleinstehendes!) Modul (getrennt von Deklaration von Konstanten oder Initialisierung von Variablen für Haupt- und Unterprogramme) ausgelagert werden, enthalten nur Informationen, die für Unterprogrammnutzung erforderlich sind (Unterprogrammname, Parameterdeklarationen)\\
+\textbf{Interfaces:} \lstinline|interface| hilft, ggf. Fehlermeldung bei Datentypübergabe an Unterprogramme zu forcieren, in Unterprogrammen optionale Argumente und Allokation zu ermöglichen oder Operatoren zu überladen (siehe \cref{sec:datenverbund})\\
+\textbf{Deklaration:} Hauptprogramm oder in (alleinstehendes!) Modul (nicht zusammen mit Deklaration von Konstanten oder Initialisierung von Variablen für (Unter-)Programme) ausgelagert\\
+\textbf{Inhalt:} nur Informationen, die für Unterprogrammnutzung erforderlich sind (Unterprogrammname, Parameterdeklarationen)\\
 \textbf{Optionale Parameter und Allokieren für Unterprogramme durch Interfaces:} über \lstinline|optional|, bzw. \lstinline|allocatable| in der Deklaration (siehe \cref{code:structure}), es gilt beim Aufruf dennoch Reihenfolge der Argumente, demzufolge müssen ggf. Argumente explizit angegeben werden (also \lstinline|<subname>(<argname>=<argvalue>)|)\\
 \begin{lstlisting}[caption={\bfseries Dateischema Modul, Haupt- und Unterprogramme },label=code:structure]
   module <modulename1>
-  ! erklaerender Kommentar
-  implicit none
-  <globale Deklarationen, Definitionen, Initialisierungen>
-  
-  contains
-  <globale Prozeduren, Funktionen, Interfaces, falls nicht anderswo definiert>
+    implicit none
+    <globale Deklarationen, Definitionen, Initialisierungen>
+    contains
+    <globale Prozeduren, Funktionen, Interfaces, falls nicht anderswo definiert>
   end module <modulename>
   
   module <modulename2>
-  ! erklaerender Kommentar
-  interface
-    subroutine <suname>(<Argument(e))
-      <type>, intent(<intent>) :: <argname>
-      <type>, allocatable, dimension(:,:,...) :: <allocargname>
-      <type>, intent(<intent>), optional :: <optargname>
-      ...
-    end subroutine <subname>
-  end interface
+    interface
+      subroutine <suname>(<Argument(e))
+        <type>, intent(<intent>) :: <arg>
+        <type>, allocatable, dimension(:,:,...) :: <allocarg>
+        <type>, intent(<intent>), optional :: <optarg>
+      end subroutine <subname>
+    end interface
   end module <modulename>
   
   program <progname>
-  ! erklaerender Kommentar
-  use <modulename1>
-  use <modulename2>
-  implicit none
-  <lokale Deklarationen (auch zu nutzende Funktionen), Definitionen, Initialisierungen>
-  <Anweisungsteil>
-  stop
+    use <modulename1>
+    use <modulename2>
+    implicit none
+    <lokale Deklarationen (auch zu nutzende Funktionen), Definitionen, Initialisierungen>
+    <Anweisungsteil>
+    stop
   end program <progname>
   
   <type> function <funcname>(<Arugment(e)>)
-  ! erklaerender Kommentar
-  use <modulename1>
-  implicit none
-  <type>, intent(<intent>) :: <argname>
-  <weitere lokale Deklarationen, Definitionen, Initialisierungen>
-  <Anweisungen>
-  return
+    use <modulename1>
+    implicit none
+    <type>, intent(<intent>) :: <argname>
+    <weitere lokale Deklarationen, Definitionen, Initialisierungen>
+    <Anweisungen, funcname wird zugewiesen>
+    return
   end function <funcname>
   
   subroutine <subname>(<Arguemt(e)>)
-  ! erklaerender Kommentar
-  use <modulename1>
-  implicit none
-  <type>, intent(<intent>) :: <argname>
-  <type>, allocatable, dimension(:,:,...) :: <allocargname>
-  <type>, intent(<intent>), optional :: <optargname>
-  <weitere lokale Deklarationen, Definitionen, Initialisierungen>
-  <Anweisungen>
-  return
+    use <modulename1>
+    implicit none
+    <type>, intent(<intent>) :: <argname>
+    <type>, allocatable, dimension(:,:,...) :: <allocargname>
+    <type>, intent(<intent>), optional :: <optargname>
+    <weitere lokale Deklarationen, Definitionen, Initialisierungen>
+    <Anweisungen, out-Argumente werden zugewiesen>
+    return
   end subroutine <subname>
 \end{lstlisting}
 
