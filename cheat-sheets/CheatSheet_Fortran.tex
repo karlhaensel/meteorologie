@@ -96,9 +96,8 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 
 \section{Formalia laut FOPS}
 \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaute oder ß), Groß- oder Kleinschreibung Fortran egal, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
-\textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten/Parameter in GROSSBUCHSTABEN, Variablen in kleinbuchstaben\\
-\textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|\\
-\textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden
+\textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten komplett in Groß-, Variablen in Kleinbuchstaben\\
+\textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|
 
 \section{Operatoren}
 \textbf{Deklaration von Variablen:} \lstinline|<type>| \lstinline|:: <varname>|\\
@@ -118,13 +117,11 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 \textbf{Assoziativität der Operatoren:} alle linksassoziativ, nur Potenz-Operator \lstinline|**| rechtsassoziativ, \textbf{CAVE:} wegen Rundungsfehlern nicht immer exakt gleich zur mathematischen Assoziativität\\
 \textbf{Potenz} mit \lstinline|**| ungenauer als reine Multiplikation\\
 Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität übernommen, Hierarchie \lstinline|complex > real > integer|\\
-\textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|\\
-\textbf{Zusätzliche (Sicherheits-)Klammern} verlangsamen nicht
+\textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|
 
 \section{Konstanten}
-\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht (z.B. Dimensionen von Feldern in der Deklaration und in do-Zählschleife), um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können\\
-\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>| \\
-\textbf{Konstanten immer komplett in Großbuchstaben benennen}
+\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht, um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können, Benennung immer komplett in Großbuchstaben\\
+\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>|
 
 \section{Zahlen}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8; für Details \href{http://earth.uni-muenster.de/~joergs/doc/f90/unix-um/dfum_034.html}{siehe hier})\\
@@ -390,6 +387,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 \section{Ein- und Ausgabe}
 \subsection{Standardeingabe und -ausgabe}
 \textbf{Einlesen von Variablen über Terminal:} \lstinline|read(*,*) <varname>|\\
+\textbf{CAVE:} beim Einlesen von input sorgt Eingabe von \lstinline|/| für ein Ignorieren aller weiteren Eingaben in der Zeile, ggf. muss also \lstinline|'/'| genutzt werden\\
 \textbf{Ausgabe von Variablen über Terminal:} \lstinline|write(*,*) <Wert>|\\
 \textbf{Formatierung beeinflussen:} \lstinline|(*,<character>)|, Syntax siehe \cref{sec:formatierung}\\
 \textbf{Umleitung von input und output beim Programmaufruf:} alles, was über die Standard-Ausgabe (erster \lstinline|*|) eingelesenen oder geschrieben wird, kann auch aus einer Datei eingelesen oder in eine Datei geschrieben werden, indem beim Aufruf in das Programm umgeleitet wird (\lstinline[style=neutral]|program.x < inputfile|), bzw. aus dem Programm umgeleitet wird (\lstinline[style=neutral]|program.x > outputfile|) werden (oder beides kombiniert: \lstinline[style=neutral]|program.x < inputfile > outputfile|)
