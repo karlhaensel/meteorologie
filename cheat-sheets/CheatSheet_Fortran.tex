@@ -96,12 +96,14 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 
 \section{Formalia laut FOPS}
 \textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaute oder ß), Groß- oder Kleinschreibung Fortran egal, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
-\textbf{ Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten komplett in Groß-, Variablen in Kleinbuchstaben\\
+\textbf{Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten komplett in Groß-, Variablen in Kleinbuchstaben\\
 \textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|
 
-\section{Operatoren}
+\section{Deklaration und Operatoren}
 \textbf{Deklaration von Variablen:} \lstinline|<type>| \lstinline|:: <varname>|\\
 \textbf{Zuweisung von Variablen:} \lstinline|<varname>| \lstinline|= <Wert>|\\
+\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht, um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können, Benennung immer komplett in Großbuchstaben\\
+\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>|
 \textbf{Hierarchie der Operatoren:}
 \begin{enumerate}
   \item Geklammerte Ausdrücke \lstinline|( )|
@@ -119,21 +121,15 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität übernommen, Hierarchie \lstinline|complex > real > integer|\\
 \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|
 
-\section{Konstanten}
-\textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht, um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können, Benennung immer komplett in Großbuchstaben\\
-\textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>|
-
 \section{Zahlen}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8; für Details \href{http://earth.uni-muenster.de/~joergs/doc/f90/unix-um/dfum_034.html}{siehe hier})\\
-\textbf{CAVE:} \lstinline|<integer>| \lstinline|= 5.7| liefert keine Fehlermeldung, schneidet aber am Punkt ab!\\
 \textbf{Modulo:} \lstinline|mod(<number 1>, <number 2>)| liefert \textbf{Rest der Division} (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
-\textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real>| \lstinline|= real(<integer>)|\\
-\textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer>| \lstinline|= nint(<real>)| (im Gegensatz zu \lstinline|<integer>| \lstinline|= <real>|, wo nur rationaler Teil abgeschnitten wird)\\
+\textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
+\textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird, \textbf{CAVE!})\\
 \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| nur, wenn es um Anzahlen oder Indizes geht; soll gerechnet werden, dann als \lstinline|real|\\
 \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
 \textbf{Absolutbetrag einer Zahl:} \lstinline|abs(<number>)|
 \begin{lstlisting}[caption={\bfseries Beispiel: CAVE - implizite Umwandlungen bei Division}]
-  ! BEISPIEL
   real    :: z
   integer :: i
   i = 57
@@ -148,12 +144,12 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \textbf{String-Verkettung:} \lstinline|y_string = "String 1"   // "String 2"|
 \begin{lstlisting}[caption={\bfseries Beispiel: String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
   y_string = "String 1" // &
-  "String 2"
+             "String 2"
 \end{lstlisting}
-\textbf{Strings ändern:} Strings können indiziert werden, sodass auch einzelne Zeichen gezielt geändert werden können: \lstinline|<character>(2:4) = "neu"|\\
-\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character>| \lstinline|= repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
+\textbf{Strings ändern/Teilabfrage:} Strings können auch indiziert werden, z.B. \lstinline|<character>(2:4) = "neu"|\\
+\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
 \textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character>| \lstinline|= trim(<character>)| \\
-\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format \lstinline|write(<charactervar>, <format>) <numerical1>, <character>, <numerical2>|
+\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format (siehe \cref{sec:formatierung}),z.B. \lstinline|write(<charactervar>, <format>) <numerical1>, <character>, <numerical2>|
 
 \section{Datenverbund (Derived Type)}\label{sec:datenverbund}
 \textbf{Möglichkeit, um eigene strukturierte Datentypen zu definieren und zu nutzen (z.B. Datenbanknutzung)}\\
