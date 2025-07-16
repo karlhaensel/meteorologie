@@ -29,11 +29,11 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={kind, module, use, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
+  morekeywords={kind, module, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
   morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
-  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist, contains, allocatable, optional},  % Datentypen, Deklaration etc
+  morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist, contains, allocatable, optional, use},  % Datentypen, Deklaration etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
   keywordstyle=[2]\color{cyan},
@@ -94,16 +94,16 @@
 {\Huge \textbf{\textsf{Fortran Cheat Sheet}}}
 Zusammenstellung: Karl Hänsel, Stand: \today
 
-\section{Formalia laut FOPS}
-\textbf{Allgemein:} nur ASCII-Zeichen (keine Umlaute oder ß), Groß- oder Kleinschreibung Fortran egal, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
+\section{Formalia, Variablen und Konstanten}
+\textbf{Allgemein im Programmtext:} nur ASCII-Zeichen (keine Umlaute oder ß), Groß- oder Kleinschreibung Fortran egal, eine Zeile (höchstens 72 Zeichen) pro Befehl, Zeilenfortsetzung mit \lstinline|&|\\
 \textbf{Namen allgemein:} beginnen mit Buchstaben, es folgen Buchstaben, Ziffern oder Unterstriche, immer \lstinline|implicit none| vor Deklaration setzen und so implizite Typvereinbarung vermeiden, Konstanten komplett in Groß-, Variablen in Kleinbuchstaben\\
-\textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|
-
-\section{Deklaration und Operatoren}
+\textbf{Namensbeginn je nach Typ:} logicals \lstinline|l|, character \lstinline|y|, loop indices \lstinline|j|, local integers \lstinline|i|, subprogram integer arguments \lstinline|k|, local reals \lstinline|z|, subprogram real arguments \lstinline|p|, complex numbers \lstinline|c|\\
 \textbf{Deklaration von Variablen:} \lstinline|<type>| \lstinline|:: <varname>|\\
 \textbf{Zuweisung von Variablen:} \lstinline|<varname>| \lstinline|= <Wert>|\\
 \textbf{Konstanten:} nutzen, sobald ein Wert mehrfach auftaucht, um später leichter Programmanpassungen oder -erweiterungen an nur einem Ort vornehmen zu können, Benennung immer komplett in Großbuchstaben\\
 \textbf{Definition von Konstanten direkt im Deklarationsteil möglich:} \lstinline|<type>, parameter :: <CONSTNAME>=<Wert>|
+
+\section{Operatoren}
 \textbf{Hierarchie der Operatoren:}
 \begin{enumerate}
   \item Geklammerte Ausdrücke \lstinline|( )|
@@ -121,10 +121,10 @@ Zusammenstellung: Karl Hänsel, Stand: \today
 Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität übernommen, Hierarchie \lstinline|complex > real > integer|\\
 \textbf{Vergleichsoperatoren} funktionieren für alle Zahlen und auch character-Variablen (Vergleich des ASCII-Codes), bei komplexen Zahlen nur \lstinline|==, /=|
 
-\section{Zahlen}
+\section{Zahlen (integer, real, complex)}
 \textbf{Ganze Zahlen:} \lstinline|integer| standardmäßig \lstinline|integer(kind=4)| mit Tiefe von 32 Bit, also Wertebereich von $-2^{31}$ bis $2^{31}-1$, bzw. von $-2147483648$ bis $2147483647$, 64 Bit mit \lstinline|integer(kind=8)| (möglich sind 1, 2, 4 und 8; für Details \href{http://earth.uni-muenster.de/~joergs/doc/f90/unix-um/dfum_034.html}{siehe hier})\\
-\textbf{Modulo:} \lstinline|mod(<number 1>, <number 2>)| liefert \textbf{Rest der Division} (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
-\textbf{Umwandeln von \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
+\textbf{Rest der Division/Modulo:} \lstinline|mod(<number 1>,<number 2>)| (Vorzeichen entspricht dem von \lstinline|<number 1>|) \\
+\textbf{Umwandeln \lstinline|integer| auf \lstinline|real|:} \lstinline|<real> = real(<integer>)|\\
 \textbf{Runden von \lstinline|real| auf nächsten \lstinline|integer|:} \lstinline|<integer> = nint(<real>)| (im Gegensatz zu \lstinline|<integer> = <real>|, wo nur rationaler Teil abgeschnitten wird, \textbf{CAVE!})\\
 \textbf{Faustregel zur Wahl des Zahlentyps:} \lstinline|integer| nur, wenn es um Anzahlen oder Indizes geht; soll gerechnet werden, dann als \lstinline|real|\\
 \textbf{Komplexe Zahlen:} nach \lstinline|complex :: c<varname>| Zuweisung z.B. mit \lstinline|c<varname>=(1.0,1.0)| (hier $1+\textbf{i}$)\\
@@ -139,60 +139,49 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
   z = i/10.  ! 5.7
 \end{lstlisting}
 
-\section{Zeichenketten (\glqq Strings\grqq)}
+\section{Zeichenketten (Strings)}
 \textbf{Strings:} in Fortran mit festzulegender Länge an Zeichen  (höchstens 256) \lstinline|character(len=<integer>) :: <character>|\\
 \textbf{String-Verkettung:} \lstinline|y_string = "String 1"   // "String 2"|
 \begin{lstlisting}[caption={\bfseries Beispiel: String-Verkettung über Code-Zeilen hinweg},label=lst:stringkette]
   y_string = "String 1" // &
              "String 2"
 \end{lstlisting}
-\textbf{Strings ändern/Teilabfrage:} Strings können auch indiziert werden, z.B. \lstinline|<character>(2:4) = "neu"|\\
-\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integer>)|, Anzahl muss $\geq 0$ sein\\
-\textbf{Leerzeichen am Schluss eines Strings entfernen:} \lstinline|<character>| \lstinline|= trim(<character>)| \\
-\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format (siehe \cref{sec:formatierung}),z.B. \lstinline|write(<charactervar>, <format>) <numerical1>, <character>, <numerical2>|
+\textbf{Strings ändern/Teilabfrage:} Strings können auch indiziert werden, z.B. \lstinline|<character>(2:4)  = "neu"|\\
+\textbf{Strings aus Wiederholung erstellen:} \lstinline|<character> = repeat(<character>, <integercount>)|, \lstinline|<integercount>| $\geq 0$\\
+\textbf{Leerzeichen String-Ende entfernen:} \lstinline|trim(<character>)| \\
+\textbf{Strings aus/mit numerischen Variablen generieren:} über write-Befehl mit Format (siehe \cref{sec:formatierung})
 
 \section{Datenverbund (Derived Type)}\label{sec:datenverbund}
-\textbf{Möglichkeit, um eigene strukturierte Datentypen zu definieren und zu nutzen (z.B. Datenbanknutzung)}\\
-\textbf{Abstrakte Deklaration Datentyp:} erfolgt durch \lstinline|type :: <typename> ... end type <typename>|, dazwischen steht pro Zeile eine Deklarationspaar \lstinline|<type> :: <typevarname>|, dort können auch weitere vorher definierte eigene Datentypen verwendet werden\\
-\textbf{Konkrete Deklaration Variablen des Datenverbunds:} erfolgt darunter mit \lstinline|type(<typename>) :: <varname>|\\
-\textbf{Ansteuern einzelner Untervariablen:} mittels \lstinline|%|, z.B. \lstinline|person%y_name = "Max Musterfrau"| oder Argumentenliste in Deklarationsreihenfolge \lstinline|<typevarname> = (<var1>, <var2>, <var3>...)|\\
-\textbf{Einlesen:} sind pro Zeile (oder Eingabe) genau die angegebenen Untervariablen enthalten, reicht zum einlesen \lstinline|read(<unit number>, *) <typevarname>|\\
-\textbf{Überladen von Operatoren:} Operatoren (wie z.B. \lstinline|-, +, ...|) können für den Datentyp neu definiert werden, indem eine Funktion geschrieben wird, die das gewünschte Ergebnis liefert und dann ein interface definiert wird, das den Operator "überlädt", z.B.: \lstinline|interface operator (-) \n procedure my_diff_function end interface operator (-)|, zum Beispiel:
-\begin{lstlisting}[caption={Nutzung eigener Datentypen inklusive Überladung}]
-	module punkt2D
-	
-	type :: p2
+\textbf{Ziel:} eigene strukturierte Datentypen definieren und nutzen, die aus mehreren Untervariablen zusammengesetzt sind (auch vorher bereits definierte andere eigene Datenverbünde möglich)\\
+\textbf{Ansteuern einzelner Untervariablen} mittels \lstinline|%|, z.B. \lstinline|person%y_name = "Max Musterfrau"| oder Argumentenliste in Deklarationsreihenfolge \lstinline|<typevarname> = (<var1>, <var2>, <var3>...)|\\
+\textbf{Einlesen:} sind pro Zeile (oder Eingabe) genau die angegebenen Untervariablen enthalten, reicht zum einlesen \lstinline|read(<unit number>, *)| \lstinline|<typevarname>|\\
+\textbf{Überladen von Operatoren:} Operatoren (\lstinline|-, +, ...|) können mit einer Funktion und einem zugehörigen Interface für den Datentyp neu definiert (\glqq überladen\grqq) werden:
+\begin{lstlisting}[caption={Beispiel Nutzung eigener Datentypen inklusive Überladung}]
+  module punkt2D
+    type :: p2
 	  real :: z_x
 	  real :: z_y
-	end type
-	
+    end type
 	interface operator (-)
 	  procedure diff
 	end interface operator (-)
-	
 	contains
-	
 	function diff(pa, pb)
 	  type(p2), intent(in) :: pa, pb
 	  type(p2)             :: diff
-	  
 	  diff%z_x = pa%z_x - pb%z_x
 	  diff%z_y = pa%z_y - pb%z_y
 	end function diff
-	end module
+  end module
 	
-	program punkttest
+  program punkttest
 	use punkt2D
-	
 	implicit none
 	type(p2) :: punkt_a, punkt_b, punkt_diff
-	
 	punkt_a = p2( 2, 3)
 	punkt_b = p2(20,30)
-	
 	punkt_diff = punkt_a - punkt_b
-	
-	end program punkttest
+  end program punkttest
 \end{lstlisting}
 
 
@@ -200,7 +189,7 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 \begin{lstlisting}[caption={\bfseries Verzweigungen mit if}]
   ! einzeilige if-Anweisung
   if (<logical>) <einzelne Anweisung>
-  
+ 
   ! if-then
   if (<logical>) then
     <Anweisung(en)>
@@ -224,26 +213,26 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
     <Anweisung(en) 4>
   endif
 \end{lstlisting}
-\begin{lstlisting}[caption={\bfseries Verzweigungen mit select case}]
-	! weit verzweigte if-else-Strukturen vermeiden:
-	select case (<integer, logical, character>) ! KEIN real
-		case (<integer, integer range, logical, character>)
-			<Anweisung(en) 1>
-		case (<integer, integer range, logical, character>)
-			<Anweisung(en) 2>
-		case default  ! wenn keiner der obigen zutrifft
-			<Anweisung(en) 3 sonst>
-	end select
-	! auch schachtelbar mit weiteren select case oder if-else-Bloecken
+\begin{lstlisting}[caption={\bfseries Verzweigungen mit select case (um weit verzweigte if-else-Strukturen zu vermeiden)}]
+  select case (<integer/logical/character>)
+    ! KEIN real zur Ueberpruefung ntuzbar!
+    case (<integer/range/logical/character>)
+	  <Anweisung(en) 1>
+	case (<integer/range/logical/character>)
+	  <Anweisung(en) 2>
+	case default  ! wenn keiner der obigen
+	  <Anweisung(en) 3 sonst>
+  end select
+  ! auch schachtelbar mit weiteren select case oder if-else-Bloecken
 	
-	! Beispiel fuer integer mit Bereichen und mehreren Optionen pro case:
-	select case (i_integer)
-		case ( 5:7  )    ...
-		case ( 8:   )    ...
-		case (  :10 )    ...
-		case (  :0, 10 ) ...		
-		case ( 12 )      ...
-	end select
+  ! Beispiel fuer integer mit Bereichen und mehreren Optionen pro case:
+  select case (i_integer)
+	case ( 5:7  )    ...
+	case ( 8:   )    ...
+	case (  :10 )    ...
+	case (  :0, 10 ) ...		
+	case ( 12 )      ...
+  end select
 \end{lstlisting}
 \textbf{CAVE:} Fälle werden von oben nach unten geprüft, also muss speziellste Prüfung oben stehen, sonst wird darunter ggf. nicht mehr geprüft
 
@@ -257,18 +246,18 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
   ! do-while-Schleife
   do while (<logical>)
     <Anweisung(en)>
-    ! Wiederholung bis <logical> .eqv. .false.
+    ! Wdh. bis <logical> .eqv. .false.
   enddo
   
   ! do-Schleife (CAVE!)
   do
     <Anweisung(en)>
-    ! Anweisungen werden immer wiederholt bis..
+    ! Anweisungen immer wdh. bis...
     if (<logical>) exit ! forciert Ende
   enddo
   
-  ! implizite do-Schleife, Beispiel
-  write(*,*) i_array(j_index), j_index=1, I_MAX
+  ! implizite do-Schleife, Beispiel:
+  write(*,*) i_array(j), j=1, I_MAX
 \end{lstlisting}
 \textbf{Schleifensteuerung:} \lstinline|exit| sorgt für sofortiges Beenden der Schleife (sind Schleifen verschachtelt und nicht benannt, wird nur aktueller Schleifenkontext verlassen), \lstinline|cycle| sorgt für sofortigen Sprung zum Anfang der Schleife 
 \begin{lstlisting}[caption={\bfseries Beispiel: Benannte do-Schleifen und explizites exit}]
@@ -282,9 +271,9 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
   enddo outer
 \end{lstlisting}
 \textbf{Benennung von Schleifen nicht notwendig}, wenn kein explizites \lstinline|exit| benötigt wird, aber fördert Lesbarkeit\\
-\textbf{Faustregel für Schleifenauswahl:} weiß man (konkret oder abstrakt aus vorherigem Programmverlauf) wie oft genau etwas gemacht werden muss: do-Zählschleife, ist das nicht (genau) bekannt: do-while-Schleife.
+\textbf{Faustregel für Schleifenauswahl:} (konkret oder abstrakt aus vorherigem Verlauf) bekannt wie oft genau etwas gemacht werden muss: do-Zählschleife, nicht (genau) bekannt: do-while-Schleife.
 
-\section{Felder/Arrays}
+\section{Felder (Arrays)}
 \textbf{Variablentyp:} für alle Werte in einem Feld  gleich\\
 \textbf{Arrays} haben einen (unveränderlichen) \textbf{rank} (Anzahl Dimensionen). Jede Dimension hat einen (unveränderlichen) shape \textbf{shape} (Anzahl Elemente pro Dimension) und einen (unveränderlichen) \textbf{extent} (Integer-Bereich, den die Indizes abdecken)\\
 \textbf{höchstens 7 Dimensionen}, nicht unbedingtgleicher shape\\
