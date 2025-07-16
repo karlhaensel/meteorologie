@@ -29,10 +29,10 @@
   commentstyle=\color{gray},
   morecomment=[l]{!},
   stringstyle=\color{olive},
-  morekeywords={kind, module, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
+  morekeywords={module, allocate, deallocate, subroutine, function, end, if, then, else, endif, do, enddo, while, cycle, exit, select, case, default, print, stop, error, go, to, continue, return, call, data, save, common, equivalence, external, intrinsic, assign, pause, class, type, public, private, sequence, extends, import, where, elsewhere, endwhere, forall, interface, operator, procedure, program},
   morekeywords=[2]{not, and, or, xor, eqv, neqv, true, false}, % Logik-Operatoren
   morekeywords=[3]{write, read, close, rewind, backspace, inquire, mod, nint, abs, repeat, trim, adjustl, adjustr, len_trim, index, command_argument_count, get_command_argument, reshape, dot_product, maxval, minval, maxloc, minloc, sum, size},  % built-in Prozeduren/Funktionen
-  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access}, % Standard-Argumente
+  morekeywords=[4]{format, kind, len, unit, status, iostat, action, postion, form, exist, file, intent, position, nml, recl, rec, access, kind}, % Standard-Argumente
   morekeywords=[5]{integer, real, double, precision, complex, logical, character, implicit, none, parameter, dimension, namelist, contains, allocatable, optional, use},  % Datentypen, Deklaration etc
   keywordstyle=\color{blue},
   morekeywords=[6]{in, out, inout},
@@ -227,11 +227,11 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 	
   ! Beispiel fuer integer mit Bereichen und mehreren Optionen pro case:
   select case (i_integer)
-	case ( 5:7  )    ...
-	case ( 8:   )    ...
-	case (  :10 )    ...
-	case (  :0, 10 ) ...		
-	case ( 12 )      ...
+	case (5:7)    ...
+	case (8: )    ...
+	case ( :10)    ...
+	case ( :0, 10) ...		
+	case (12)      ...
   end select
 \end{lstlisting}
 \textbf{CAVE:} Fälle werden von oben nach unten geprüft, also muss speziellste Prüfung oben stehen, sonst wird darunter ggf. nicht mehr geprüft
@@ -275,98 +275,77 @@ Werden \textbf{Zahlen verschiedener Art} verrechnet, wird die höhere Priorität
 
 \section{Felder (Arrays)}
 \textbf{Variablentyp:} für alle Werte in einem Feld  gleich\\
-\textbf{Arrays} haben einen (unveränderlichen) \textbf{rank} (Anzahl Dimensionen). Jede Dimension hat einen (unveränderlichen) shape \textbf{shape} (Anzahl Elemente pro Dimension) und einen (unveränderlichen) \textbf{extent} (Integer-Bereich, den die Indizes abdecken)\\
-\textbf{höchstens 7 Dimensionen}, nicht unbedingtgleicher shape\\
+\textbf{Größe:} unveränderlich, bestehend aus \textbf{rank} (Anzahl Dimensionen), \textbf{shape}s (Anzahl Elemente pro Dimension) und \textbf{extent}s (Integer-Bereich, den die Indizes abdecken pro Dimension), dabei \textbf{höchstens 7 Dimensionen} (nicht unbedingt gleicher shape)\\
 \textbf{Nur shape \lstinline|n| angeben:} extent automatisch \lstinline|1:n|\\
-\textbf{Nur extent \lstinline|m:n| angegeben:} shape automatisch $n-m+1$.
+\textbf{Nur extent \lstinline|m:n| angegeben:} shape automatisch $n-m+1$\\
+\textbf{Deklaration in Unterprogrammen:} hier kann letzte Dimension ggf. ohne \lstinline|shape|-Angabe bleiben (z.B. \lstinline|<type>, dimension(:) :: <varname>|, siehe \cref{sec:unterprogramme})
 \begin{lstlisting}[caption={\bfseries Deklarationsmöglichkeiten für arrays}]
   ! EINE DIMENSION (Vektor)
-  ! nur shape=n setzen, Start-Index 1:
+  ! z.B. nur shape=n setzen, Start-Index 1:
   <type>, dimension(n) :: <varname>
-  ! extent mit eigenem Start-Index m:
-  <type>, dimension(m:n) :: <varname>
   
   ! ZWEI DIMENSIONEN (2D-Matrix)
-  ! nur shapes n1, n2 setzen:
-  <type>, dimension(n1, n2) :: <varname>
-  ! extents setzen:
-  <type>, dimension(m1:n1, m2:n2) :: <varname>
+  ! z.B. shapes mit extents setzen:
+  <type>, dimension(m1:n1, m2:n2) ::        <varname>
   
-  ! ALTERNATIV auch Deklaration rechts moeglich
-  ! nur shape
-  <type> :: <varname>(n)
-  ! mit extent
+  ! ALTERNATIV auch Deklaration rechts
   <type> :: <varname>(m1:n1, m2:n2)
 \end{lstlisting}
-\begin{lstlisting}[caption={\bfseries Beispiele direkte Definition arrays}]
-  ! Wochentage
-  character(len=2), dimension(7) :: y_wochentage=["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]
-  ! geht auch mit \(...\):
-  real, dimension(3) :: z_g=\(0, 0, -9.81\)
-\end{lstlisting}
-\textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension\\
-\textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
-Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
-\textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden\\
-\textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \lstinline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück\\
 \textbf{Arrays zuweisen (eindimensional):} \lstinline|<array>(:) = [<value1>, <value2> ...]| (alt \lstinline|(/.../)|), Zuweisung über implizites \lstinline|do| mit \lstinline|<array>(:) = [(j, j=<integer>, <integer>)]|\\
-\textbf{Arrays zuweisen (mehrdimensional):} Standardwert für alle Felder \lstinline|<array>(:,:,:,...) = <value>|, Nutzung der Standard-Funktion \lstinline|reshape| unter Angabe der Form, z.B. für 2 x 2 Matrix \lstinline|<array>(2,2) = reshape([<value11>, <value12>, <value21>, <value22>], [2,2])| (Zuweisung erfolgt immer zeilenweise)
-\begin{lstlisting}[caption={\bfseries Allocatable Arrays (Genaue Größe nicht bei Deklaration bekannt)}]
+\textbf{Arrays zuweisen (mehrdimensional):} Standardwert für alle Felder \lstinline|<array>(:,:,:,...) = <value>|, Nutzung der Standard-Funktion \lstinline|reshape| unter Angabe der Form, z.B. für 2 x 2 Matrix \lstinline|<array>(2,2) = reshape([<value11>, <value12>, <value21>, <value22>], [2,2])| (zeilenweise)\\
+\textbf{Zuweisung direkt mit Deklaration möglich:} z.B. \lstinline|character(len=2), dimension(7) :: y_wochentage=["Mo", "Di", "Mi", "Do", "Fr", "Sa", "So"]|\\
+\textbf{Indizierung von arrays:} \lstinline|<arrayname>(x)| für Element \lstinline|x|, \lstinline|<arrayname>(r:s)| für Elemente \lstinline|r| bis \lstinline|s|, \lstinline|<arrayname>(:, x)| für die Elemente \lstinline|x| aus der gesamten ersten Dimension etc.\\
+\textbf{Initialisierung von arrays:} kann im Deklarationsteil oder später erfolgen \lstinline|<arrayname>(:) = 0| setzt alle Elemente auf 0 (\lstinline|<arrayname>| \lstinline|= 0| geht auch, schadet aber der Unterscheidbarkeit von dimensionslosen Variablen und arrays)\\
+\textbf{Berechnungen} zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und shpaes übereinstimmen) sind möglich\\
+\textbf{CAVE:} \textbf{Index der ersten Dimension wird am schnellsten durchlaufen} und sollte daher in geschachtelten do-Zählschleifen \textbf{immer in der innersten Schleife} durchlaufen werden\\
+\textbf{Standard-Funktionen für Felder:} \lstinline|dot_product(<array1>, <array2>)| für Skalarprodukt, \lstinline|maxval(<array>), minval(<array>)| geben Minimum und Maximum für Zahlen zurück, \lstinline|maxloc(<array>), minloc(<array>)| die entsprechenden Indizes als Felder, \lstinline|sum(<array>), size(<array>)| geben Summe und Anzahl aller Feldwerte zurück
+\begin{lstlisting}[caption={\bfseries Allocatable Arrays (shape erst im Programmverlauf)}]
   implicit none
-  ! Anzahl Dimensionen muss bekannt sein, deren Umfang aber nicht
+  ! Anzahl Dimensionen muss bekannt sein
   real, allocatable, dimension(:,:) :: za_array
   integer :: i_alloc_stat ! optional
   
-  ! genaue Deklaration dann im Programm (optional mit Fehlervariable zur Abfrage hinterher)
+  ! genaue Deklaration spaeter im Programm, optional mit Fehlervariable zur Abfrage hinterher
   allocate(za_array(<integer1>, <integer2>), stat=i_alloc_stat)
   if (i_alloc_stat /= 0) write(*,*) "Fehler, Speicherplatz reicht nicht aus!"
   ! Abfrage, ob bereits Speicherplatz zugewiesen wurde
   if (allocated(za_array)) write(*,*) "erfolgreich!"
   ! optional: Speicherplatz freigeben
   deallocate(za_array)
-
-  ! in Unterprogrammen kann ausserdem letzte Dimension bei Deklaration mit * frei bleiben (siehe Abschn. Unterprogramm)
 \end{lstlisting}
-
 \begin{lstlisting}[caption={\bfseries where-Statement als Ersatz für do-if in Feldern},language=Fortran95Konkret]
 	! statt ...
 	do j=1, i_dim
 		if (z_array1(i) <= 0.0) z_array2(i) = 0.0
 	enddo
-	
 	! geht es eleganter in einer Zeile:
 	where (z_array1(:) < 0.0) z_array2(:) = 0.0
-	
-	! auch innerhalb eines arrays:
+	! auch innerhalb des gleichen arrays:
 	where (z_array(:) < 0.0) z_array(:) = 0.0
-	
 	! ...oder verschachtelt mit elsewhere:
 	where (i_array(:) < 42)
 	  i_array(:) = 0
 	elsewhere
 	  i_array(:) = 42
 	endwhere
-	
 	! ...oder mit logischer Maske:
 	where (l_logische_maske(:))
-	  y_array(:) = "hier stimmts"
+	  y_array(:) = "hier wahr"
 	elsewhere
-	  y_array(:) = "das jetz bloed"
+	  y_array(:) = "hier falsch"
 	endwhere
-	
-	! Es koennen auch mehrere where-Anweisungen verschachtelt werden
+	! es koennen auch mehrere where-Anweisungen verschachtelt werden
 \end{lstlisting}
-\textbf{CAVE:} Das gleichzeitige Abarbeiten zweier Arrays oder die Prüfung auf eine logische Maske sind nur möglich, wenn alle beteiligten Arrays gleichen rank und shape haben!
+\textbf{CAVE:} Das gleichzeitige Abarbeiten zweier Arrays oder die Prüfung auf eine logische Maske sind nur möglich, wenn alle beteiligten Arrays gleichen \lstinline|rank| und \lstinline|shape| haben!
 \begin{lstlisting}[caption={forall-Statement als Parallelisierung von where}]
-	! forall beinhaltet Wertebereich (ggf. Schrittweite) einer Laufvariable und ggf. eine logische Maske, die anzuwenden ist, z.B.:
+	! forall mit Wertebereich (ggf. Schrittweite) einer Laufvariable und ggf. eine logische Maske, die anzuwenden ist, z.B.:
 	forall(j=<integer1>:<integer2>, <logical expression>) za_array(j) = <real>
 	
-	! es koennen aber auch mehrere Bereiche genutz werden, z.B. fuer Transposition einer Matrix:
+	! es koennen auch mehrere Bereiche genutz werden, z.B. fuer Transposition einer Matrix:
 	forall(ja=1:I_N, jb=1:I_N)
 	  i_matrix(ja, jb) ) = i_matrix(jb, ja)
 	end forall
 	! funktioniert korrekt, da Augabe parallelisiert wird, d.h. es benoetigt keinen Zwischenspeicher fuer Aenderungen
-	
 \end{lstlisting}
 
 \section{Ein- und Ausgabe}
@@ -431,7 +410,7 @@ Berechnungen zwischen arrays und Skalaren sowie mehreren arrays (wenn rank und s
 	/
 \end{lstlisting}
 
-\section{Unterprogramme und Module}
+\section{Unterprogramme und Module}\label{sec:unterprogramme}
 \textbf{Speichern:} entweder alles in einer Datei mit Hauptprogramm oder einzelne Dateien möglich\\
 \textbf{Subroutinen:} \lstinline|subroutine| führt Code aus, nutzt dazu die als Argumente übergebenen Werte, Aufruf mit \lstinline|call <subroutine>(<Argument(e)>)|\\
 \textbf{Funktionen:} \lstinline|<type> function| gibt einen Wert der Art \lstinline|<type>| zurück, nutzt dazu die als Argumente übergebenen Werte, Zuweisung mit \lstinline|<varname>| \lstinline|= <function>(<Argument(e)>)|, muss im Hauptprogramm vorher mit entsprechendem Datentyp definiert werden: \lstinline|<type>| \lstinline|:: <function>|\\
